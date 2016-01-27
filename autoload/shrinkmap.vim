@@ -138,10 +138,13 @@ endfunction "}}}
 
 
 function! s:draw() "{{{
-  " TODO: FIXME: vimfiler, NERDtree
-
   " Check current buffer
-  if bufname('%') ==# s:buf_name
+  let l:bufname = bufname('%')
+  if l:bufname ==# s:buf_name       ||
+    \l:bufname ==# '[Command Line]' ||
+    \l:bufname =~ '^vimfiler:'      ||
+    \l:bufname =~ '^\[Unite\]'      ||
+    \l:bufname =~ '^NERDTree'
     return
   endif
 
@@ -197,7 +200,12 @@ endfunction "}}}
 
 function! s:hilite() "{{{
   " Check current buffer
-  if bufname('%') ==# s:buf_name
+  let l:bufname = bufname('%')
+  if l:bufname ==# s:buf_name       ||
+    \l:bufname ==# '[Command Line]' ||
+    \l:bufname =~ '^vimfiler:'      ||
+    \l:bufname =~ '^\[Unite\] -'    ||
+    \l:bufname =~ '^NERDTree'
     return
   endif
 
