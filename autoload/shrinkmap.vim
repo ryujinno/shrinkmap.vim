@@ -75,7 +75,13 @@ function! s:on_win_enter() "{{{
     quit
   endif
 
-  " TODO: UNDERCONST: Drop forcus
+  " TODO: FIXME: Drop forcus more
+  " Check shrinkmap buffer
+  if bufname('%') ==# s:buf_name
+    wincmd p
+    return
+  endif
+
   " TODO: UNDERCONST: Scroll against mouse click
 endfunction "}}}
 
