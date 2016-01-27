@@ -209,11 +209,10 @@ function! s:hilite() "{{{
   endif
 
   " Get cursor position in current buffer
-  let l:cur_pos = getpos('.')
-  normal! H
-  let l:top    = line('.') / 4
-  normal! L
-  let l:bottom = line('.') / 4 + 1
+  let l:cur_pos     = getpos('.')
+  let l:view_top    = line('w0') / 4
+  let l:view_bottom = line('w$') / 4 + 1
+  let l:bottom      = line('$')  / 4 + 1
 
   " Get context
   let l:context = s:get_context()
@@ -223,15 +222,33 @@ function! s:hilite() "{{{
   execute 'buffer ' . bufnr(s:buf_name)
 
   " Highlight
-  execute 'match CursorLine /\%>' . l:top . 'l\%<' . l:bottom . 'l./'
+  execute 'match CursorLine /\%>' . l:view_top . 'l\%<' . l:view_bottom . 'l./'
 
-  " Center the highlight
-  " TODO: FIXME: Still has bug bottom of window
-  let l:height = winheight(0)
-  let l:view_bottom = (l:top + l:bottom) / 2 + l:height / 2
-  let l:jump = min([l:view_bottom, line('$')])
-  normal! gg
-  execute 'normal! ' . l:jump . 'gg'
+  "
+  " Scroll to highlight
+  "
+  let l:view_center = (l:view_top + l:view_bottom) / 2
+  let l:near_top    = l:view_center - 0
+  let l:near_bottom = l:bottom - l:view_center
+  let l:half_height = winheight(0) / 2
+
+  " Get near scroll
+  if l:near_top < l:near_bottom
+    normal! gg
+    let l:normal_command = 'j'
+    let l:jump = min([l:view_center + l:half_height, l:bottom])
+  else
+    normal! G
+    let l:normal_command = 'k'
+    let l:jump = max([l:bottom - l:view_center + l:half_height, 0])
+  endif
+
+  " Scroll from near
+  let l:y = 0
+  while l:y < l:jump
+    execute 'normal! ' . l:normal_command
+    let l:y += 1
+  endwhile
 
   " Resume context
   call s:resume_context(l:context)
