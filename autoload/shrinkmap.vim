@@ -1,7 +1,6 @@
-let s:window_width     = 25 "chars
+let s:window_width     = 20 "chars
 let s:lazy_limit_time  = 0.25 "sec
-let s:lazy_limit_count = 15 "times: should a odd number to avoid from s:on_cursor_moved()
-let s:shrink           = 2
+let s:lazy_limit_count = 15 "times: should be a odd number to avoid from s:on_cursor_moved()
 
 let s:buf_name         = 'shrinkmap'
 let s:reltime          = 0
@@ -163,13 +162,13 @@ function! s:draw() "{{{
   let l:lines = getline(0, '$')
   for l:line in l:lines
     let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
-    let l:x1     = strdisplaywidth(l:indent) / s:shrink
-    let l:x2     = strdisplaywidth(l:line) / s:shrink
+    let l:x1     = strdisplaywidth(l:indent)
+    let l:x2     = strdisplaywidth(l:line)
 
     if l:x1 < l:x2
       "echo 'draw(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
-      call canvas#allocate(l:canvas, l:x2, l:y)
-      call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2)
+      call canvas#allocate(l:canvas, l:x2, l:y, s:window_width)
+      call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2, s:window_width)
     endif
 
     let l:y += 1
@@ -210,9 +209,10 @@ function! s:hilite() "{{{
 
   " Get cursor position in current buffer
   let l:cur_pos     = getpos('.')
-  let l:view_top    = line('w0') / 4
-  let l:view_bottom = line('w$') / 4 + 1
-  let l:bottom      = line('$')  / 4 + 1
+  let l:braille_height = canvas#braille_height()
+  let l:view_top    = line('w0') / l:braille_height
+  let l:view_bottom = line('w$') / l:braille_height + 1
+  let l:bottom      = line('$')  / l:braille_height + 1
 
   " Get context
   let l:context = s:get_context()

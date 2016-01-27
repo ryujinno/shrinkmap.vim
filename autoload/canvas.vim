@@ -1,3 +1,4 @@
+let s:shrink = 2
 let s:braille_char_offset = 0x2800
 let s:pixel_map = [
 \  [ 0x01, 0x08 ],
@@ -6,7 +7,21 @@ let s:pixel_map = [
 \  [ 0x40, 0x80 ],
 \]
 
+let s:braille_height   = len(s:pixel_map)
+let s:braille_width    = len(s:pixel_map[0])
+let s:braille_char_len = len(nr2char(s:braille_char_offset, 1))
+
 "let s:debug = 0
+
+
+function! canvas#braille_height() "{{{
+  return s:braille_height
+endfunction " }}}
+
+
+function! canvas#braille_width() "{{{
+  return s:braille_width
+endfunction " }}}
 
 
 function! canvas#get_string(canvas_row) "{{{
@@ -30,7 +45,7 @@ function! canvas#get_frame(canvas, fixed_width) "{{{
       let l:line .= nr2char(l:char_code, 1)
     endfor
 
-    let l:i = strlen(l:line) / 3 " A braille char is 3 bytes
+    let l:i = strlen(l:line) / s:braille_char_len
     while l:i < a:fixed_width
       let l:line .= ' '
       let l:i += 1
@@ -48,9 +63,9 @@ function! canvas#init() "{{{
 endfunction "}}}
 
 
-function! canvas#allocate(canvas, x, y) "{{{
-  let l:px = a:x / 2
-  let l:py = a:y / 4
+function! canvas#allocate(canvas, x, y, width) "{{{
+  let l:px = min([a:x / s:shrink / s:braille_width, a:width * s:shrink])
+  let l:py = a:y / s:braille_height
   let l:canvas_len = len(a:canvas)
 
   if l:py < l:canvas_len
@@ -95,14 +110,16 @@ function! canvas#allocate(canvas, x, y) "{{{
 endfunction "}}}
 
 
-function! canvas#horizontal_line(canvas, y, x1, x2) "{{{
-  let l:py    = a:y / 4
-  let l:y_mod = a:y % 4
+function! canvas#horizontal_line(canvas, y, x1, x2, width) "{{{
+  let l:py    = a:y / s:braille_height
+  let l:y_mod = a:y % s:braille_height
+  let l:x1    = min([a:x1 / s:shrink / s:braille_width, a:width * s:shrink])
+  let l:x2    = min([a:x2 / s:shrink / s:braille_width, a:width * s:shrink])
 
-  let l:x = a:x1
-  while l:x < a:x2
-    let l:px    = l:x / 2
-    let l:x_mod = l:x % 2
+  let l:x = l:x1
+  while l:x < l:x2
+    let l:px    = l:x / s:braille_width
+    let l:x_mod = l:x % s:braille_width
 
     "if s:debug
     "  echo 'hl(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
