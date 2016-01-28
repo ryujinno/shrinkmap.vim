@@ -29,7 +29,8 @@ function! shrinkmap#open() "{{{
   " Open window
   execute 'botright ' . g:shrinkmap_window_width . ' vnew ' . s:buf_name
 
-  call s:set()
+  call s:set_buffer()
+  call s:handler(1)
 
   " Resume window
   execute l:cur_win . 'wincmd w'
@@ -40,7 +41,7 @@ function! shrinkmap#open() "{{{
 endfunction "}}}
 
 
-function! s:set() "{{{
+function! s:set_buffer() "{{{
   " Temporary buffer
   setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted
 
@@ -49,15 +50,19 @@ function! s:set() "{{{
 
   " Read only
   setlocal nomodifiable
+endfunction "}}}
 
+function! s:handler(set) "{{{
   augroup shrinkmap_group
     autocmd!
-    autocmd WinEnter <buffer>          call s:on_win_enter()
-    autocmd BufWinEnter              * call s:on_buf_win_enter()
-    autocmd TextChanged,TextChangedI * call s:on_text_changed()
-    autocmd CursorMoved,CursorMovedI * call s:on_cursor_moved()
-    autocmd InsertEnter,InsertLeave  * call s:on_insert()
-    autocmd CursorHold,CursorHoldI   * call s:on_cursor_hold()
+    if a:set
+      autocmd WinEnter <buffer>          call s:on_win_enter()
+      autocmd BufWinEnter              * call s:on_buf_win_enter()
+      autocmd TextChanged,TextChangedI * call s:on_text_changed()
+      autocmd CursorMoved,CursorMovedI * call s:on_cursor_moved()
+      autocmd InsertEnter,InsertLeave  * call s:on_insert()
+      autocmd CursorHold,CursorHoldI   * call s:on_cursor_hold()
+    endif
   augroup END
 endfunction "}}}
 
@@ -291,7 +296,7 @@ function! shrinkmap#close() "{{{
 
   close
 
-  call s:unset()
+  call s:handler(0)
 
   " Resume window
   if l:cur_win != l:sm_win
