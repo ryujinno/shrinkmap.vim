@@ -1,4 +1,5 @@
-let s:buf_name         = 'shrinkmap'
+let s:buf_name         = '[shrinkmap]'
+let s:buf_name_pattern = '\[shrinkmap\]'
 
 let s:reltime          = 0
 let s:lazy_count       = 0
@@ -8,7 +9,7 @@ let s:debug = 0
 
 
 function! shrinkmap#toggle() "{{{
-  if bufwinnr(s:buf_name) < 0
+  if bufwinnr(s:buf_name_pattern) < 0
     call shrinkmap#open()
   else
     call shrinkmap#close()
@@ -18,10 +19,9 @@ endfunction "}}}
 
 function! shrinkmap#open() "{{{
   " Check shrinkmap window
-  if bufwinnr(s:buf_name) > 0
+  if bufwinnr(s:buf_name_pattern) > 0
     return
   endif
-
 
   " Get current window
   let l:cur_win = winnr()
@@ -169,8 +169,13 @@ function! shrinkmap#update() "{{{
     return
   endif
 
-  " Check shrinkmap window
-  let l:sm_win = bufwinnr(s:buf_name)
+  " Check shrinkmap buffer
+  if bufname('%') ==# s:buf_name
+    return
+  endif
+
+  " Check shrinkmap windlw
+  let l:sm_win = bufwinnr(s:buf_name_pattern)
   if l:sm_win < 0
     return
   endif
@@ -180,7 +185,7 @@ function! shrinkmap#update() "{{{
 
   " Prepare for viewport
   let l:braille_height = canvas#braille_height()
-  let l:view_height    = winheight(bufwinnr(s:buf_name))
+  let l:view_height    = winheight(l:sm_win)
   let l:bottom         = line('$')
 
   " Get source lines
@@ -227,7 +232,7 @@ function! shrinkmap#update() "{{{
 
   " Move to shrinkmap window and buffer
   execute l:sm_win . 'wincmd w'
-  execute 'buffer ' . bufnr(s:buf_name)
+  execute 'buffer ' . bufnr(s:buf_name_pattern)
 
   " Start modify
   setlocal modifiable
@@ -278,13 +283,13 @@ endfunction "}}}
 
 function! shrinkmap#close() "{{{
   " Check shrinkmap window
-  if bufwinnr(s:buf_name) < 0
+  let l:sm_win = bufwinnr(s:buf_name_pattern)
+  if l:sm_win < 0
     return
   endif
 
   " Get current and shrinkmap window
   let l:cur_win = winnr()
-  let l:sm_win  = bufwinnr(s:buf_name)
 
   " Move to shrinkmap window
   execute l:sm_win . 'wincmd w'
