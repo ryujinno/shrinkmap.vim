@@ -1,10 +1,8 @@
-let s:window_width     = 20 "chars
-let s:lazy_limit_time  = 0.25 "sec
-let s:lazy_limit_count = 15 "times: should be a odd number to avoid from s:on_cursor_moved()
-
 let s:buf_name         = 'shrinkmap'
+
 let s:reltime          = 0
 let s:lazy_count       = 0
+let s:text_processed   = 0
 
 let s:debug = 1
 
@@ -29,7 +27,7 @@ function! shrinkmap#open() "{{{
   let l:cur_win = winnr()
 
   " Open window
-  execute 'botright ' . s:window_width . ' vnew ' . s:buf_name
+  execute 'botright ' . g:shrinkmap_window_width . ' vnew ' . s:buf_name
 
   call s:set()
 
@@ -80,6 +78,8 @@ function! s:on_win_enter() "{{{
     quit
   endif
 
+  let s:text_processed = 0
+
   " TODO: FIXME: Drop shrinkmap window forcus
 
   " TODO: UNDERCONST: Scroll against mouse click
@@ -91,6 +91,7 @@ function! s:on_buf_win_enter() "{{{
     echom 'on_buf_win_enter'
   endif
   call shrinkmap#update()
+  let s:text_processed = 0
 endfunction "}}}
 
 
@@ -99,6 +100,7 @@ function! s:on_insert() "{{{
     echom 'on_insert'
   endif
   call shrinkmap#update()
+  let s:text_processed = 0
 endfunction "}}}
 
 
@@ -108,12 +110,18 @@ function! s:on_text_changed() "{{{
       echom 'on_text_changed'
     endif
     call shrinkmap#update()
+    let s:text_processed = 1
+    let s:lazy_count += 1
+  else
+    let s:text_processed = 0
   endif
 endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  if !s:too_hot()
+  if s:too_hot()
+    let s:text_processed = 0
+  else
     if s:debug
       echom 'on_cursor_moved'
     endif
@@ -127,15 +135,18 @@ function! s:on_cursor_hold() "{{{
     echom 'on_cursor_hold'
   endif
   call shrinkmap#update()
+  let s:text_processed = 0
 endfunction "}}}
 
 
 function! s:too_hot() "{{{
   let l:reltime = str2float(reltimestr(reltime()))
 
-  if l:reltime - s:reltime > s:lazy_limit_time || s:lazy_count > s:lazy_limit_count
+  if l:reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
     let l:too_hot = 0
     let s:lazy_count = 0
+  elseif s:text_processed
+    let l:too_hot = 1
   else
     let l:too_hot = 1
     let s:lazy_count += 1
@@ -207,8 +218,8 @@ function! shrinkmap#update() "{{{
       "if s:debug
       "  echom 'draw(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
       "endif
-      call canvas#allocate(l:canvas, l:x2, l:y, s:window_width)
-      call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2, s:window_width)
+      call canvas#allocate(l:canvas, l:x2, l:y, g:shrinkmap_window_width)
+      call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2, g:shrinkmap_window_width)
     endif
 
     let l:y += 1
@@ -225,7 +236,7 @@ function! shrinkmap#update() "{{{
   %delete _
 
   " Put canvas to shrinkmap buffer
-  call append(0, canvas#get_frame(l:canvas, s:window_width))
+  call append(0, canvas#get_frame(l:canvas, g:shrinkmap_window_width))
 
   " Highlight
   execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . l:hilite_bottom . 'l./'
