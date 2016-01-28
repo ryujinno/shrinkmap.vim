@@ -6,6 +6,8 @@ let s:buf_name         = 'shrinkmap'
 let s:reltime          = 0
 let s:lazy_count       = 0
 
+let s:debug = 1
+
 
 function! shrinkmap#toggle() "{{{
   if bufwinnr(s:buf_name) < 0
@@ -21,6 +23,7 @@ function! shrinkmap#open() "{{{
   if bufwinnr(s:buf_name) > 0
     return
   endif
+
 
   " Get current window
   let l:cur_win = winnr()
@@ -69,7 +72,9 @@ endfunction "}}}
 
 
 function! s:on_win_enter() "{{{
-  echom 'on_win_enter'
+  if s:debug
+    echom 'on_win_enter'
+  endif
   " Check window count
   if winnr('$') == 1
     quit
@@ -82,20 +87,26 @@ endfunction "}}}
 
 
 function! s:on_buf_win_enter() "{{{
-  echom 'on_buf_win_enter'
+  if s:debug
+    echom 'on_buf_win_enter'
+  endif
   call shrinkmap#update()
 endfunction "}}}
 
 
 function! s:on_insert() "{{{
-  echom 'on_insert'
+  if s:debug
+    echom 'on_insert'
+  endif
   call shrinkmap#update()
 endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
   if !s:too_hot()
-    echom 'on_text_changed'
+    if s:debug
+      echom 'on_text_changed'
+    endif
     call shrinkmap#update()
   endif
 endfunction "}}}
@@ -103,14 +114,18 @@ endfunction "}}}
 
 function! s:on_cursor_moved() "{{{
   if !s:too_hot()
-    echom 'on_cursor_moved'
-    call s:hilite()
+    if s:debug
+      echom 'on_cursor_moved'
+    endif
+    call shrinkmap#update()
   endif
 endfunction "}}}
 
 
 function! s:on_cursor_hold() "{{{
-  echom 'on_cursor_hold'
+  if s:debug
+    echom 'on_cursor_hold'
+  endif
   call shrinkmap#update()
 endfunction "}}}
 
@@ -133,12 +148,6 @@ endfunction " }}}
 
 
 function! shrinkmap#update() "{{{
-  call s:draw()
-  call s:hilite()
-endfunction "}}}
-
-
-function! s:draw() "{{{
   " Check current buffer
   let l:bufname = bufname('%')
   if l:bufname ==# s:buf_name       ||
@@ -158,19 +167,46 @@ function! s:draw() "{{{
   " Get context
   let l:context = s:get_context()
 
+  " Prepare for viewport
+  let l:braille_height = canvas#braille_height()
+  let l:view_height = winheight(bufwinnr(s:buf_name))
+
+  " Get source lines
+  let l:src_center  = (line('w0') + line('w$')) / 2
+  let l:src_top     = l:src_center - l:view_height / 2 * l:braille_height
+  let l:src_bottom  = l:src_center + l:view_height / 2 * l:braille_height
+  let l:bottom      = line('$')
+  if l:src_top < 0
+    let l:src_top    = 0
+    let l:src_bottom = min([l:view_height * l:braille_height, l:bottom])
+  elseif l:src_bottom > l:bottom
+    let l:src_top    = max([l:bottom - l:view_height * l:braille_height, 0])
+    let l:src_bottom = l:bottom
+  endif
+
+  " Get highlight lines
+  let l:hilite_top     = max([(line('w0') - l:src_top) / l:braille_height, 0])
+  let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height, l:view_height])
+  if s:debug
+    echom 'update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom . ',
+      \ hilite_top = ' . l:hilite_top . ', hilite_bottom = ' . l:hilite_bottom
+  endif
+
   " Init canvas
   let l:canvas = canvas#init()
 
   " Draw line on canvas
   let l:y = 0
-  let l:lines = getline(0, '$')
+  let l:lines = getline(l:src_top, l:src_bottom)
   for l:line in l:lines
     let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
     let l:x1     = strdisplaywidth(l:indent)
     let l:x2     = strdisplaywidth(l:line)
 
     if l:x1 < l:x2
-      "echo 'draw(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
+      "if s:debug
+      "  echom 'draw(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
+      "endif
       call canvas#allocate(l:canvas, l:x2, l:y, s:window_width)
       call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2, s:window_width)
     endif
@@ -191,79 +227,17 @@ function! s:draw() "{{{
   " Put canvas to shrinkmap buffer
   call append(0, canvas#get_frame(l:canvas, s:window_width))
 
+  " Highlight
+  execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . l:hilite_bottom . 'l./'
+
+  " Scroll
+  normal! gg
+
   " End modify
   setlocal nomodifiable
 
   " Resume context
   call s:resume_context(l:context)
-endfunction "}}}
-
-
-function! s:hilite() "{{{
-  " Check current buffer
-  let l:bufname = bufname('%')
-  if l:bufname ==# s:buf_name       ||
-    \l:bufname ==# '[Command Line]' ||
-    \l:bufname =~ '^vimfiler:'      ||
-    \l:bufname =~ '^\[Unite\] -'    ||
-    \l:bufname =~ '^NERDTree'
-    return
-  endif
-
-  " Check shrinkmap window
-  let l:sm_win = bufwinnr(s:buf_name)
-  if l:sm_win < 0
-    return
-  endif
-
-  " Get cursor position in current buffer
-  let l:cur_pos     = getpos('.')
-  let l:braille_height = canvas#braille_height()
-  let l:view_top    = line('w0') / l:braille_height
-  let l:view_bottom = line('w$') / l:braille_height + 1
-  let l:bottom      = line('$')  / l:braille_height + 1
-
-  " Get context
-  let l:context = s:get_context()
-
-  " Move to shrinkmap window and buffer
-  execute l:sm_win . 'wincmd w'
-  execute 'buffer ' . bufnr(s:buf_name)
-
-  " Highlight
-  execute 'match CursorLine /\%>' . l:view_top . 'l\%<' . l:view_bottom . 'l./'
-
-  "
-  " Scroll to highlight
-  "
-  let l:view_center = (l:view_top + l:view_bottom) / 2
-  let l:near_top    = l:view_center - 0
-  let l:near_bottom = l:bottom - l:view_center
-  let l:half_height = winheight(0) / 2
-
-  " Get near scroll
-  if l:near_top < l:near_bottom
-    normal! gg
-    let l:normal_command = 'j'
-    let l:jump = min([l:view_center + l:half_height, l:bottom])
-  else
-    normal! G
-    let l:normal_command = 'k'
-    let l:jump = max([l:bottom - l:view_center + l:half_height, 0])
-  endif
-
-  " Scroll from near
-  let l:y = 0
-  while l:y < l:jump
-    execute 'normal! ' . l:normal_command
-    let l:y += 1
-  endwhile
-
-  " Resume context
-  call s:resume_context(l:context)
-
-  " Resume cursor position
-  call setpos('.', l:cur_pos)
 endfunction "}}}
 
 
