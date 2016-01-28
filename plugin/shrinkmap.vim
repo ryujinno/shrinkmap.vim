@@ -15,7 +15,7 @@ if !exists('g:shrinkmap_lazy_limit_time')
 endif
 
 if !exists('g:shrinkmap_lazy_limit_count')
-  let g:shrinkmap_lazy_limit_count = 8 "times
+  let g:shrinkmap_lazy_limit_count = 8 "times: Suitable value is multiplied by 4
 endif
 
 

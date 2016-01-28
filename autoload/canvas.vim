@@ -11,7 +11,7 @@ let s:braille_height   = len(s:pixel_map)
 let s:braille_width    = len(s:pixel_map[0])
 let s:braille_char_len = len(nr2char(s:braille_char_offset, 1))
 
-"let s:debug = 0
+let s:debug = 0
 
 
 function! canvas#braille_height() "{{{
@@ -70,9 +70,9 @@ function! canvas#allocate(canvas, x, y, width) "{{{
 
   if l:py < l:canvas_len
     " py has already allocated
-    "if s:debug
-    "  echo 'py has already allocated'
-    "endif
+    if s:debug
+      echom 'py has already allocated'
+    endif
     let l:cur_len = len(a:canvas[l:py])
     let l:i = l:cur_len
     while l:i <= l:px
@@ -82,16 +82,16 @@ function! canvas#allocate(canvas, x, y, width) "{{{
     endwhile
   else
     " py has not allocated yet
-    "if s:debug
-    "  echo 'py has not allocated yet'
-    "endif
+    if s:debug
+      echom 'py has not allocated yet'
+    endif
 
     let l:i = l:canvas_len
     while l:i <= l:py - 1
       " Allocate blank until py
-      "if s:debug
-      "  echo 'Allocate blank until py'
-      "endif
+      if s:debug
+        echom 'Allocate blank until py'
+      endif
       call add(a:canvas, [])
       let l:i += 1
     endwhile
@@ -122,7 +122,7 @@ function! canvas#horizontal_line(canvas, y, x1, x2, width) "{{{
     let l:x_mod = l:x % s:braille_width
 
     "if s:debug
-    "  echo 'hl(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
+    "  echom 'hl(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
     "endif
 
     let a:canvas[l:py][l:px] += s:pixel_map[l:y_mod][l:x_mod]

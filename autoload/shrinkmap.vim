@@ -4,7 +4,7 @@ let s:reltime          = 0
 let s:lazy_count       = 0
 let s:text_processed   = 0
 
-let s:debug = 1
+let s:debug = 0
 
 
 function! shrinkmap#toggle() "{{{
@@ -56,6 +56,7 @@ function! s:handler(set) "{{{
   augroup shrinkmap_group
     autocmd!
     if a:set
+      " TODO: UNDERCONST: Resize event
       autocmd WinEnter <buffer>          call s:on_win_enter()
       autocmd BufWinEnter              * call s:on_buf_win_enter()
       autocmd TextChanged,TextChangedI * call s:on_text_changed()
@@ -179,13 +180,13 @@ function! shrinkmap#update() "{{{
 
   " Prepare for viewport
   let l:braille_height = canvas#braille_height()
-  let l:view_height = winheight(bufwinnr(s:buf_name))
+  let l:view_height    = winheight(bufwinnr(s:buf_name))
+  let l:bottom         = line('$')
 
   " Get source lines
   let l:src_center  = (line('w0') + line('w$')) / 2
   let l:src_top     = l:src_center - l:view_height / 2 * l:braille_height
   let l:src_bottom  = l:src_center + l:view_height / 2 * l:braille_height
-  let l:bottom      = line('$')
   if l:src_top < 0
     let l:src_top    = 0
     let l:src_bottom = min([l:view_height * l:braille_height, l:bottom])
@@ -196,7 +197,7 @@ function! shrinkmap#update() "{{{
 
   " Get highlight lines
   let l:hilite_top     = max([(line('w0') - l:src_top) / l:braille_height, 0])
-  let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height, l:view_height])
+  let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
   if s:debug
     echom 'update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom . ',
       \ hilite_top = ' . l:hilite_top . ', hilite_bottom = ' . l:hilite_bottom
@@ -238,7 +239,7 @@ function! shrinkmap#update() "{{{
   call append(0, canvas#get_frame(l:canvas, g:shrinkmap_window_width))
 
   " Highlight
-  execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . l:hilite_bottom . 'l./'
+  execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . (l:hilite_bottom + 1) . 'l./'
 
   " Scroll
   normal! gg
