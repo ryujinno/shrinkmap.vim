@@ -45,8 +45,9 @@ function! canvas#get_frame(canvas, fixed_width) "{{{
       let l:line .= nr2char(l:char_code, 1)
     endfor
 
-    let l:i = strlen(l:line) / s:braille_char_len
-    while l:i < a:fixed_width
+    let l:i = len(l:canvas_row)
+    let l:n = a:fixed_width
+    while l:i <= l:n
       let l:line .= ' '
       let l:i += 1
     endwhile
@@ -64,7 +65,7 @@ endfunction "}}}
 
 
 function! canvas#allocate(canvas, x, y, width) "{{{
-  let l:px = min([a:x / s:shrink / s:braille_width, a:width * s:shrink])
+  let l:px = min([a:x / s:shrink / s:braille_width, a:width])
   let l:py = a:y / s:braille_height
   let l:canvas_len = len(a:canvas)
 
