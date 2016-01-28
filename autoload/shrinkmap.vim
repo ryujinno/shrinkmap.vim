@@ -83,8 +83,6 @@ function! s:on_win_enter() "{{{
     quit
   endif
 
-  let s:text_processed = 0
-
   " TODO: FIXME: Drop shrinkmap window forcus
 
   " TODO: UNDERCONST: Scroll against mouse click
@@ -96,7 +94,6 @@ function! s:on_buf_win_enter() "{{{
     echom 'on_buf_win_enter'
   endif
   call shrinkmap#update()
-  let s:text_processed = 0
 endfunction "}}}
 
 
@@ -124,9 +121,7 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  if s:too_hot()
-    let s:text_processed = 0
-  else
+  if !s:too_hot()
     if s:debug
       echom 'on_cursor_moved'
     endif
@@ -140,7 +135,6 @@ function! s:on_cursor_hold() "{{{
     echom 'on_cursor_hold'
   endif
   call shrinkmap#update()
-  let s:text_processed = 0
 endfunction "}}}
 
 
