@@ -60,7 +60,8 @@ function! s:handler(set) "{{{
       autocmd WinEnter <buffer>          call s:on_win_enter()
       autocmd BufWinEnter              * call s:on_buf_win_enter()
       autocmd TextChanged,TextChangedI * call s:on_text_changed()
-      autocmd CursorMoved,CursorMovedI * call s:on_cursor_moved()
+      autocmd CursorMoved              * call s:on_cursor_moved()
+      autocmd CursorMovedI             * call s:on_cursor_moved_on_insert()
       autocmd InsertEnter,InsertLeave  * call s:on_insert()
       autocmd VimResized               * call s:on_resized()
       autocmd CursorHold,CursorHoldI   * call s:on_cursor_hold()
@@ -129,11 +130,60 @@ function! s:on_cursor_moved() "{{{
     echom 'shrinkmap: on_cursor_moved()'
   endif
 
-  " Check shrinkmap buffer
-  if bufname('%') ==# s:buf_name
-    " Move to previous window to drop focus
-    wincmd p
-    return
+  if bufname('%') !=# s:buf_name
+    if g:shrinkmap_debug >= 2
+      echom 'Cursor moved in the other buffer'
+    endif
+
+    if !s:too_hot()
+      call shrinkmap#update()
+    endif
+  else
+    let l:mouse      = getchar()
+    let l:mouse_win  = v:mouse_win
+    let l:mouse_lnum = v:mouse_lnum
+
+    if l:mouse_win == 0
+      if g:shrinkmap_debug
+        echom 'Got focus of shrinkmap window'
+      endif
+
+      " Move to previous window to drop focus
+      wincmd p
+    else
+      if g:shrinkmap_debug
+        echom 'Mouse clicked in shrinkmap window'
+      endif
+      if exists('b:hilite_top')
+        if g:shrinkmap_debug
+          echom 'Jump to mouse clicked'
+        endif
+
+        " Get new source top line
+        let l:src_shift = (l:mouse_lnum - 1) * canvas#braille_height()
+        let l:new_src_top = b:src_top + l:src_shift
+
+        if g:shrinkmap_debug
+          echom 'mouse = ' . l:mouse . ', mouse_win = ' . l:mouse_win . ', mouse_lnum = ' . l:mouse_lnum
+          echom 'src_shift = ' . l:src_shift . ', new_src_top = ' . l:new_src_top
+        endif
+
+        " Move to previous window to scroll
+        wincmd p
+
+        " Jump to mouse clicked
+        execute 'normal! ' . l:new_src_top . 'gg'
+      endif
+
+      call shrinkmap#update()
+    endif
+  endif
+endfunction "}}}
+
+
+function! s:on_cursor_moved_on_insert() "{{{
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_cursor_moved_on_insert()'
   endif
 
   if !s:too_hot()
@@ -270,6 +320,13 @@ function! shrinkmap#update() "{{{
   " Scroll
   normal! gg
 
+  " Set buffer variables for mouse click at on_cursor_moved()
+  let b:src_center    = l:src_center
+  let b:src_top       = l:src_top
+  let b:src_bottom    = l:src_bottom
+  let b:hilite_top    = l:hilite_top
+  let b:hilite_bottom = l:hilite_bottom
+
   " End modify
   setlocal nomodifiable
 
@@ -324,4 +381,3 @@ function! shrinkmap#close() "{{{
     execute l:cur_win 'wincmd w'
   endif
 endfunction "}}}
-
