@@ -11,28 +11,28 @@ let s:braille_height = len(s:pixel_map)
 let s:braille_width  = len(s:pixel_map[0])
 
 
-function! canvas#init() "{{{
+function! shrinkmap#canvas#init() "{{{
   return []
 endfunction "}}}
 
 
-function! canvas#braille_height() "{{{
+function! shrinkmap#canvas#braille_height() "{{{
   return s:braille_height
 endfunction " }}}
 
 
-function! canvas#braille_width() "{{{
+function! shrinkmap#canvas#braille_width() "{{{
   return s:braille_width
 endfunction " }}}
 
 
-function! canvas#allocate(canvas, x, y, width) "{{{
+function! shrinkmap#canvas#allocate(canvas, x, y, width) "{{{
   let l:px = min([a:x / s:shrink / s:braille_width, a:width])
   let l:py = a:y / s:braille_height
   let l:canvas_len = len(a:canvas)
 
   if l:py < l:canvas_len
-    call shrinkmap#debug_message(1, 'camvas#allocate(): py has already allocated')
+    call shrinkmap#debug(1, 'camvas#allocate(): py has already allocated')
     let l:cur_len = len(a:canvas[l:py])
     let l:i = l:cur_len
     while l:i <= l:px
@@ -41,12 +41,12 @@ function! canvas#allocate(canvas, x, y, width) "{{{
       let l:i += 1
     endwhile
   else
-    call shrinkmap#debug_message(1, 'camvas#allocate(): py has not allocated yet')
+    call shrinkmap#debug(1, 'camvas#allocate(): py has not allocated yet')
 
     let l:i = l:canvas_len
     while l:i <= l:py - 1
       " Allocate blank until py
-      call shrinkmap#debug_message(1, 'camvas#allocate(): Allocate blank until py')
+      call shrinkmap#debug(1, 'camvas#allocate(): Allocate blank until py')
       call add(a:canvas, [])
       let l:i += 1
     endwhile
@@ -65,7 +65,7 @@ function! canvas#allocate(canvas, x, y, width) "{{{
 endfunction "}}}
 
 
-function! canvas#draw_line(canvas, y, x1, x2, width) "{{{
+function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
   let l:py    = a:y / s:braille_height
   let l:y_mod = a:y % s:braille_height
   let l:x1    = min([a:x1 / s:shrink / s:braille_width, a:width * s:shrink])
@@ -76,8 +76,12 @@ function! canvas#draw_line(canvas, y, x1, x2, width) "{{{
     let l:px    = l:x / s:braille_width
     let l:x_mod = l:x % s:braille_width
 
-    call shrinkmap#debug_message(2,
-    \ 'canvas#draw_line(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
+    call shrinkmap#debug(2,
+    \ 'shrinkmap#canvas#draw_line()' .
+    \ ': y = ' . a:y .
+    \ ', x = ' . l:x .
+    \ ', py = ' . l:py .
+    \ ', px =' . l:px
     \)
 
     let a:canvas[l:py][l:px] += s:pixel_map[l:y_mod][l:x_mod]
@@ -87,7 +91,7 @@ function! canvas#draw_line(canvas, y, x1, x2, width) "{{{
 endfunction "}}}
 
 
-function! canvas#get_frame(canvas, fixed_width) "{{{
+function! shrinkmap#canvas#get_frame(canvas, fixed_width) "{{{
   let l:lines = []
 
   for l:canvas_row in a:canvas
@@ -111,7 +115,7 @@ function! canvas#get_frame(canvas, fixed_width) "{{{
 endfunction "}}}
 
 
-function! canvas#get_string(canvas_row) "{{{
+function! shrinkmap#canvas#get_string(canvas_row) "{{{
   let l:line = ''
 
   for l:char_code in a:canvas_row

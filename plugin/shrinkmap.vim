@@ -26,7 +26,7 @@ endif
 command! ShrinkMapToggle call shrinkmap#toggle()
 command! ShrinkMapOpen   call shrinkmap#open()
 command! ShrinkMapClose  call shrinkmap#close()
-command! ShrinkMapUpdate call shrinkmap#update()
+command! ShrinkMapUpdate call shrinkmap#viewport#update()
 
 nnoremap <silent> <Leader>ss :<C-U>ShrinkMapToggle<CR>
 nnoremap <silent> <Leader>so :<C-U>ShrinkMapOpen<CR>
