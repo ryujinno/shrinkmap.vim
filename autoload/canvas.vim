@@ -32,9 +32,7 @@ function! canvas#allocate(canvas, x, y, width) "{{{
   let l:canvas_len = len(a:canvas)
 
   if l:py < l:canvas_len
-    if g:shrinkmap_debug
-      echom 'camvas#allocate(): py has already allocated'
-    endif
+    call shrinkmap#debug_message(1, 'camvas#allocate(): py has already allocated')
     let l:cur_len = len(a:canvas[l:py])
     let l:i = l:cur_len
     while l:i <= l:px
@@ -43,17 +41,12 @@ function! canvas#allocate(canvas, x, y, width) "{{{
       let l:i += 1
     endwhile
   else
-    " py has not allocated yet
-    if g:shrinkmap_debug
-      echom 'camvas#allocate(): py has not allocated yet'
-    endif
+    call shrinkmap#debug_message(1, 'camvas#allocate(): py has not allocated yet')
 
     let l:i = l:canvas_len
     while l:i <= l:py - 1
       " Allocate blank until py
-      if g:shrinkmap_debug
-        echom 'camvas#allocate(): Allocate blank until py'
-      endif
+      call shrinkmap#debug_message(1, 'camvas#allocate(): Allocate blank until py')
       call add(a:canvas, [])
       let l:i += 1
     endwhile
@@ -83,9 +76,9 @@ function! canvas#draw_line(canvas, y, x1, x2, width) "{{{
     let l:px    = l:x / s:braille_width
     let l:x_mod = l:x % s:braille_width
 
-    if g:shrinkmap_debug >= 2
-      echom 'canvas#draw_line(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
-    endif
+    call shrinkmap#debug_message(2,
+    \ 'canvas#draw_line(): y = ' . a:y . ', x = ' . l:x . ', py = ' . l:py . ', px =' . l:px
+    \)
 
     let a:canvas[l:py][l:px] += s:pixel_map[l:y_mod][l:x_mod]
 

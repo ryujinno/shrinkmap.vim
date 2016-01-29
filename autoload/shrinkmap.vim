@@ -78,9 +78,7 @@ endfunction "}}}
 
 
 function! s:on_win_enter() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_win_enter()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_win_enter()')
 
   " Check window count
   if winnr('$') == 1
@@ -92,18 +90,14 @@ endfunction "}}}
 
 
 function! s:on_buf_win_enter() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_buf_win_enter()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_buf_win_enter()')
 
   call shrinkmap#update()
 endfunction "}}}
 
 
 function! s:on_insert() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_insert()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_insert()')
 
   call shrinkmap#update()
   let s:text_processed = 0
@@ -111,9 +105,7 @@ endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_text_changed()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_text_changed()')
 
   if !s:too_hot()
     call shrinkmap#update()
@@ -126,14 +118,10 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_cursor_moved()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_cursor_moved()')
 
   if bufname('%') !=# s:buf_name
-    if g:shrinkmap_debug >= 2
-      echom 'Cursor moved in the other buffer'
-    endif
+    call shrinkmap#debug_message(2, 'Cursor moved in the other buffer')
 
     if !s:too_hot()
       call shrinkmap#update()
@@ -144,29 +132,23 @@ function! s:on_cursor_moved() "{{{
     let l:mouse_lnum = v:mouse_lnum
 
     if l:mouse_win == 0
-      if g:shrinkmap_debug
-        echom 'Got focus of shrinkmap window'
-      endif
+      call shrinkmap#debug_message(1, 'Got focus of shrinkmap window')
 
       " Move to previous window to drop focus
       wincmd p
     else
-      if g:shrinkmap_debug
-        echom 'Mouse clicked in shrinkmap window'
-      endif
+      call shrinkmap#debug_message(1, 'Mouse clicked in shrinkmap window')
       if exists('b:hilite_top')
-        if g:shrinkmap_debug
-          echom 'Jump to mouse clicked'
-        endif
+        call shrinkmap#debug_message(1, 'Jump to mouse clicked')
 
         " Get new source top line
         let l:src_shift = (l:mouse_lnum - 1) * canvas#braille_height()
         let l:new_src_top = b:src_top + l:src_shift
 
-        if g:shrinkmap_debug
-          echom 'mouse = ' . l:mouse . ', mouse_win = ' . l:mouse_win . ', mouse_lnum = ' . l:mouse_lnum
-          echom 'src_shift = ' . l:src_shift . ', new_src_top = ' . l:new_src_top
-        endif
+        call shrinkmap#debug_message(1,
+        \ 'mouse = ' . l:mouse . ', mouse_win = ' . l:mouse_win . ', mouse_lnum = ' . l:mouse_lnum .
+        \ ', src_shift = ' . l:src_shift . ', new_src_top = ' . l:new_src_top
+        \)
 
         " Move to previous window to scroll
         wincmd p
@@ -182,9 +164,7 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved_on_insert() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_cursor_moved_on_insert()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_cursor_moved_on_insert()')
 
   if !s:too_hot()
     call shrinkmap#update()
@@ -193,18 +173,14 @@ endfunction "}}}
 
 
 function! s:on_resized() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_resized()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_resized()')
 
   call shrinkmap#update()
 endfunction "}}}
 
 
 function! s:on_cursor_hold() "{{{
-  if g:shrinkmap_debug
-    echom 'shrinkmap: on_cursor_hold()'
-  endif
+  call shrinkmap#debug_message(1, 'shrinkmap: on_cursor_hold()')
 
   call shrinkmap#update()
 endfunction "}}}
@@ -274,10 +250,10 @@ function! shrinkmap#update() "{{{
   " Get highlight lines
   let l:hilite_top     = max([(line('w0') - l:src_top) / l:braille_height, 0])
   let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
-  if g:shrinkmap_debug
-    echom 'shrinkmap#update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom . ',
-      \ hilite_top = ' . l:hilite_top . ', hilite_bottom = ' . l:hilite_bottom
-  endif
+  call shrinkmap#debug_message(1,
+      \ 'shrinkmap#update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom .
+      \ ', hilite_top = ' . l:hilite_top . ', hilite_bottom = ' . l:hilite_bottom
+  \)
 
   " Init canvas
   let l:canvas = canvas#init()
@@ -291,9 +267,10 @@ function! shrinkmap#update() "{{{
     let l:x2     = strdisplaywidth(l:line)
 
     if l:x1 < l:x2
-      if g:shrinkmap_debug >= 2
-        echom 'shrinkmap#update(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
-      endif
+      call shrinkmap#debug_message(2,
+      \ 'shrinkmap#update(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
+      \)
+
       call canvas#allocate(l:canvas, l:x2, l:y, g:shrinkmap_window_width)
       call canvas#draw_line(l:canvas, l:y, l:x1, l:x2, g:shrinkmap_window_width)
     endif
@@ -379,5 +356,12 @@ function! shrinkmap#close() "{{{
   " Resume window
   if l:cur_win != l:sm_win
     execute l:cur_win 'wincmd w'
+  endif
+endfunction "}}}
+
+
+function! shrinkmap#debug_message(level, msg) "{{{
+  if g:shrinkmap_debug >= a:level
+    echom a:msg
   endif
 endfunction "}}}
