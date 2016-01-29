@@ -186,7 +186,7 @@ function! shrinkmap#update() "{{{
   endif
 
   " Check shrinkmap buffer
-  if bufname('%') ==# s:buf_name
+  if l:bufname ==# s:buf_name
     return
   endif
 
