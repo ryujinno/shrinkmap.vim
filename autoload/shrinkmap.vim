@@ -62,6 +62,7 @@ function! s:handler(set) "{{{
       autocmd TextChanged,TextChangedI * call s:on_text_changed()
       autocmd CursorMoved,CursorMovedI * call s:on_cursor_moved()
       autocmd InsertEnter,InsertLeave  * call s:on_insert()
+      autocmd VimResized               * call s:on_resized()
       autocmd CursorHold,CursorHoldI   * call s:on_cursor_hold()
     endif
   augroup END
@@ -133,6 +134,15 @@ function! s:on_cursor_moved() "{{{
   if !s:too_hot()
     call shrinkmap#update()
   endif
+endfunction "}}}
+
+
+function! s:on_resized() "{{{
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_resized()'
+  endif
+
+  call shrinkmap#update()
 endfunction "}}}
 
 
