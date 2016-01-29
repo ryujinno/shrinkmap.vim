@@ -25,13 +25,13 @@ function! shrinkmap#open() "{{{
   let l:cur_win = winnr()
 
   " Open window
-  execute 'botright ' . g:shrinkmap_window_width . ' vnew ' . s:buf_name
+  execute 'botright ' g:shrinkmap_window_width ' vnew ' s:buf_name
 
   call s:set_buffer()
   call s:handler(1)
 
   " Resume window
-  execute l:cur_win . 'wincmd w'
+  execute l:cur_win 'wincmd w'
 
   " Update shrinkmap
   let s:delay_count = 0
@@ -237,8 +237,8 @@ function! shrinkmap#update() "{{{
   endfor
 
   " Move to shrinkmap window and buffer
-  execute l:sm_win . 'wincmd w'
-  execute 'buffer ' . bufnr(s:buf_name_pattern)
+  execute l:sm_win 'wincmd w'
+  execute 'buffer ' bufnr(s:buf_name_pattern)
 
   " Start modify
   setlocal modifiable
@@ -278,7 +278,7 @@ endfunction "}}}
 
 function! s:resume_context(context) "{{{
   " Resume to current window
-  execute a:context.cur_win . 'wincmd w'
+  execute a:context.cur_win 'wincmd w'
 
   " Resume visual mode
   if a:context.mode ==# 'v' || a:context.mode ==# 'V' || a:context.mode ==# "\026"
@@ -298,7 +298,7 @@ function! shrinkmap#close() "{{{
   let l:cur_win = winnr()
 
   " Move to shrinkmap window
-  execute l:sm_win . 'wincmd w'
+  execute l:sm_win 'wincmd w'
 
   close
 
@@ -306,7 +306,7 @@ function! shrinkmap#close() "{{{
 
   " Resume window
   if l:cur_win != l:sm_win
-    execute l:cur_win . 'wincmd w'
+    execute l:cur_win 'wincmd w'
   endif
 endfunction "}}}
 
