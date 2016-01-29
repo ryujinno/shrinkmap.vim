@@ -19,7 +19,7 @@ if !exists('g:shrinkmap_lazy_limit_count')
 endif
 
 if !exists('g:shrinkmap_debug')
-  let g:shrinkmap_debug = 2
+  let g:shrinkmap_debug = 0
 endif
 
 
