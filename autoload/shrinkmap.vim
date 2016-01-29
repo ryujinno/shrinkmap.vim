@@ -50,13 +50,15 @@ function! s:set_buffer() "{{{
 
   " Read only
   setlocal nomodifiable
+
+  " Window
+  setlocal winfixwidth
 endfunction "}}}
 
 function! s:handler(set) "{{{
   augroup shrinkmap_group
     autocmd!
     if a:set
-      " TODO: UNDERCONST: Resize event
       autocmd WinEnter <buffer>          call s:on_win_enter()
       autocmd BufWinEnter              * call s:on_buf_win_enter()
       autocmd TextChanged,TextChangedI * call s:on_text_changed()
@@ -79,6 +81,7 @@ function! s:on_win_enter() "{{{
   if s:debug
     echom 'on_win_enter'
   endif
+
   " Check window count
   if winnr('$') == 1
     quit
@@ -94,6 +97,7 @@ function! s:on_buf_win_enter() "{{{
   if s:debug
     echom 'on_buf_win_enter'
   endif
+
   call shrinkmap#update()
 endfunction "}}}
 
@@ -102,16 +106,18 @@ function! s:on_insert() "{{{
   if s:debug
     echom 'on_insert'
   endif
+
   call shrinkmap#update()
   let s:text_processed = 0
 endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
+  if s:debug
+    echom 'on_text_changed'
+  endif
+
   if !s:too_hot()
-    if s:debug
-      echom 'on_text_changed'
-    endif
     call shrinkmap#update()
     let s:text_processed = 1
     let s:lazy_count += 1
@@ -122,10 +128,11 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
+  if s:debug
+    echom 'on_cursor_moved'
+  endif
+
   if !s:too_hot()
-    if s:debug
-      echom 'on_cursor_moved'
-    endif
     call shrinkmap#update()
   endif
 endfunction "}}}
@@ -135,6 +142,7 @@ function! s:on_cursor_hold() "{{{
   if s:debug
     echom 'on_cursor_hold'
   endif
+
   call shrinkmap#update()
 endfunction "}}}
 
@@ -174,7 +182,7 @@ function! shrinkmap#update() "{{{
     return
   endif
 
-  " Check shrinkmap windlw
+  " Check shrinkmap window
   let l:sm_win = bufwinnr(s:buf_name_pattern)
   if l:sm_win < 0
     return
