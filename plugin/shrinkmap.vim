@@ -18,6 +18,10 @@ if !exists('g:shrinkmap_lazy_limit_count')
   let g:shrinkmap_lazy_limit_count = 8 "times: Suitable value is multiplied by 4
 endif
 
+if !exists('g:shrinkmap_debug')
+  let g:shrinkmap_debug = 2
+endif
+
 
 command! ShrinkMapToggle call shrinkmap#toggle()
 command! ShrinkMapOpen   call shrinkmap#open()

@@ -5,8 +5,6 @@ let s:reltime          = 0
 let s:lazy_count       = 0
 let s:text_processed   = 0
 
-let s:debug = 0
-
 
 function! shrinkmap#toggle() "{{{
   if bufwinnr(s:buf_name_pattern) < 0
@@ -78,8 +76,8 @@ endfunction "}}}
 
 
 function! s:on_win_enter() "{{{
-  if s:debug
-    echom 'on_win_enter'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_win_enter()'
   endif
 
   " Check window count
@@ -94,8 +92,8 @@ endfunction "}}}
 
 
 function! s:on_buf_win_enter() "{{{
-  if s:debug
-    echom 'on_buf_win_enter'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_buf_win_enter()'
   endif
 
   call shrinkmap#update()
@@ -103,8 +101,8 @@ endfunction "}}}
 
 
 function! s:on_insert() "{{{
-  if s:debug
-    echom 'on_insert'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_insert()'
   endif
 
   call shrinkmap#update()
@@ -113,8 +111,8 @@ endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
-  if s:debug
-    echom 'on_text_changed'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_text_changed()'
   endif
 
   if !s:too_hot()
@@ -128,8 +126,8 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  if s:debug
-    echom 'on_cursor_moved'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_cursor_moved()'
   endif
 
   if !s:too_hot()
@@ -139,8 +137,8 @@ endfunction "}}}
 
 
 function! s:on_cursor_hold() "{{{
-  if s:debug
-    echom 'on_cursor_hold'
+  if g:shrinkmap_debug
+    echom 'shrinkmap: on_cursor_hold()'
   endif
 
   call shrinkmap#update()
@@ -211,8 +209,8 @@ function! shrinkmap#update() "{{{
   " Get highlight lines
   let l:hilite_top     = max([(line('w0') - l:src_top) / l:braille_height, 0])
   let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
-  if s:debug
-    echom 'update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom . ',
+  if g:shrinkmap_debug
+    echom 'shrinkmap#update(): src_top = ' . l:src_top . ', src_bottom = ' . l:src_bottom . ',
       \ hilite_top = ' . l:hilite_top . ', hilite_bottom = ' . l:hilite_bottom
   endif
 
@@ -228,11 +226,11 @@ function! shrinkmap#update() "{{{
     let l:x2     = strdisplaywidth(l:line)
 
     if l:x1 < l:x2
-      "if s:debug
-      "  echom 'draw(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
-      "endif
+      if g:shrinkmap_debug >= 2
+        echom 'shrinkmap#update(): y = ' . l:y . ', x2 = ' . l:x2 . ', x1 = ' . l:x1
+      endif
       call canvas#allocate(l:canvas, l:x2, l:y, g:shrinkmap_window_width)
-      call canvas#horizontal_line(l:canvas, l:y, l:x1, l:x2, g:shrinkmap_window_width)
+      call canvas#draw_line(l:canvas, l:y, l:x1, l:x2, g:shrinkmap_window_width)
     endif
 
     let l:y += 1
@@ -246,7 +244,7 @@ function! shrinkmap#update() "{{{
   setlocal modifiable
 
   " Delete shrinkmap buffer
-  %delete _
+  silent %delete _
 
   " Put canvas to shrinkmap buffer
   call append(0, canvas#get_frame(l:canvas, g:shrinkmap_window_width))
