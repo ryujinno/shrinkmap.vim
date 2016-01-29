@@ -78,10 +78,10 @@ function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
 
     call shrinkmap#debug(2,
     \ 'shrinkmap#canvas#draw_line()' .
-    \ ': y = ' . a:y .
-    \ ', x = ' . l:x .
+    \ ': y = '  . a:y  .
+    \ ', x = '  . l:x  .
     \ ', py = ' . l:py .
-    \ ', px =' . l:px
+    \ ', px ='  . l:px
     \)
 
     let a:canvas[l:py][l:px] += s:braille_pixel_map[l:y_mod][l:x_mod]

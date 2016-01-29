@@ -25,6 +25,7 @@ function! shrinkmap#viewport#update() "{{{
 
   " Prepare for viewport
   let l:braille_height = shrinkmap#canvas#braille_height()
+  let l:view_width     = winwidth(l:sm_win)
   let l:view_height    = winheight(l:sm_win)
   let l:bottom         = line('$')
 
@@ -45,9 +46,11 @@ function! shrinkmap#viewport#update() "{{{
   let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
   call shrinkmap#debug(1,
       \ 'shrinkmap#viewport#update()' .
-      \ ': src_top = ' . l:src_top .
-      \ ', src_bottom = ' . l:src_bottom .
-      \ ', hilite_top = ' . l:hilite_top .
+      \ ': view_width = '    . l:view_width  .
+      \ ', view_height = '   . l:view_height .
+      \ ', src_top = '       . l:src_top     .
+      \ ', src_bottom = '    . l:src_bottom  .
+      \ ', hilite_top = '    . l:hilite_top  .
       \ ', hilite_bottom = ' . l:hilite_bottom
   \)
 
@@ -65,13 +68,13 @@ function! shrinkmap#viewport#update() "{{{
     if l:x1 < l:x2
       call shrinkmap#debug(2,
       \ 'shrinkmap#viewport#update()' .
-      \ ': y = ' . l:y .
-      \ ', x2 = ' . l:x2 .
-      \ ', x1 = ' . l:x1
+      \ ': y = '  . l:y  .
+      \ ', x1 = ' . l:x1 .
+      \ ', x2 = ' . l:x2
       \)
 
-      call shrinkmap#canvas#allocate(l:canvas, l:x2, l:y, g:shrinkmap_window_width)
-      call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, g:shrinkmap_window_width)
+      call shrinkmap#canvas#allocate(l:canvas, l:x2, l:y, l:view_width)
+      call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
     endif
 
     let l:y += 1
@@ -88,7 +91,7 @@ function! shrinkmap#viewport#update() "{{{
   silent %delete _
 
   " Put canvas to shrinkmap buffer
-  call append(0, shrinkmap#canvas#get_frame(l:canvas, g:shrinkmap_window_width))
+  call append(0, shrinkmap#canvas#get_frame(l:canvas, l:view_width))
 
   " Highlight
   execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . (l:hilite_bottom + 1) . 'l./'
