@@ -7,7 +7,7 @@ set cpo&vim
 
 
 if !exists('g:shrinkmap_window_width')
-  let g:shrinkmap_window_width = 20 "chars
+  let g:shrinkmap_window_width = 25 "chars
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')

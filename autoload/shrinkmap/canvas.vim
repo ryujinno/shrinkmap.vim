@@ -68,8 +68,8 @@ endfunction "}}}
 function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
   let l:py    = a:y / s:braille_height
   let l:y_mod = a:y % s:braille_height
-  let l:x1    = min([a:x1 / s:shrink / s:braille_width, a:width * s:shrink])
-  let l:x2    = min([a:x2 / s:shrink / s:braille_width, a:width * s:shrink])
+  let l:x1    = min([a:x1 / s:shrink, a:width * s:shrink])
+  let l:x2    = min([a:x2 / s:shrink, a:width * s:shrink])
 
   let l:x = l:x1
   while l:x < l:x2
