@@ -212,7 +212,7 @@ function! shrinkmap#update() "{{{
     \l:bufname ==# '[Command Line]' ||
     \l:bufname =~ '^vimfiler:'      ||
     \l:bufname =~ '^\[Unite\]'      ||
-    \l:bufname =~ '^NERDTree'
+    \l:bufname =~ '^NERD_tree'
     return
   endif
 
