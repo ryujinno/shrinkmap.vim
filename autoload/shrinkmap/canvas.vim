@@ -1,14 +1,14 @@
 let s:shrink = 2
+
 let s:braille_char_offset = 0x2800
-let s:pixel_map = [
+let s:braille_pixel_map = [
 \  [ 0x01, 0x08 ],
 \  [ 0x02, 0x10 ],
 \  [ 0x04, 0x20 ],
 \  [ 0x40, 0x80 ],
 \]
-
-let s:braille_height = len(s:pixel_map)
-let s:braille_width  = len(s:pixel_map[0])
+let s:braille_height = len(s:braille_pixel_map)
+let s:braille_width  = len(s:braille_pixel_map[0])
 
 
 function! shrinkmap#canvas#init() "{{{
@@ -84,7 +84,7 @@ function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
     \ ', px =' . l:px
     \)
 
-    let a:canvas[l:py][l:px] += s:pixel_map[l:y_mod][l:x_mod]
+    let a:canvas[l:py][l:px] += s:braille_pixel_map[l:y_mod][l:x_mod]
 
     let l:x += 1
   endwhile
