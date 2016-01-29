@@ -86,8 +86,6 @@ function! s:on_win_enter() "{{{
     quit
   endif
 
-  " TODO: FIXME: Drop shrinkmap window forcus
-
   " TODO: UNDERCONST: Scroll against mouse click
 endfunction "}}}
 
@@ -129,6 +127,13 @@ endfunction "}}}
 function! s:on_cursor_moved() "{{{
   if g:shrinkmap_debug
     echom 'shrinkmap: on_cursor_moved()'
+  endif
+
+  " Check shrinkmap buffer
+  if bufname('%') ==# s:buf_name
+    " Move to previous window to drop focus
+    wincmd p
+    return
   endif
 
   if !s:too_hot()
