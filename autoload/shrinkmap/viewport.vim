@@ -152,8 +152,8 @@ function! shrinkmap#viewport#scroll(mouse_line) "{{{
 
     call shrinkmap#debug(1,
     \ 'shrinkmap#viewport#scroll()' .
-    \ ': mouse_line = ' . a:mouse_line .
-    \ ', src_shift = ' . l:src_shift .
+    \ ': mouse_line = '  . a:mouse_line .
+    \ ', src_shift = '   . l:src_shift .
     \ ', new_src_top = ' . l:new_src_top
     \)
 
