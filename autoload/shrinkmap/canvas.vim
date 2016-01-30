@@ -1,5 +1,3 @@
-let s:shrink = 2
-
 let s:braille_char_offset = 0x2800
 let s:braille_pixel_map = [
 \  [ 0x01, 0x08 ],
@@ -27,7 +25,7 @@ endfunction " }}}
 
 
 function! shrinkmap#canvas#allocate(canvas, x, y, width) "{{{
-  let l:px = min([a:x / s:shrink / s:braille_width, a:width])
+  let l:px = min([a:x / g:shrinkmap_horizontal / s:braille_width, a:width])
   let l:py = a:y / s:braille_height
   let l:canvas_len = len(a:canvas)
 
@@ -68,8 +66,8 @@ endfunction "}}}
 function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
   let l:py    = a:y / s:braille_height
   let l:y_mod = a:y % s:braille_height
-  let l:x1    = min([a:x1 / s:shrink, a:width * s:shrink])
-  let l:x2    = min([a:x2 / s:shrink, a:width * s:shrink])
+  let l:x1    = min([a:x1 / g:shrinkmap_horizontal, a:width * g:shrinkmap_horizontal])
+  let l:x2    = min([a:x2 / g:shrinkmap_horizontal, a:width * g:shrinkmap_horizontal])
 
   let l:x = l:x1
   while l:x < l:x2
