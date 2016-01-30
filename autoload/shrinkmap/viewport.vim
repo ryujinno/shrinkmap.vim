@@ -73,7 +73,7 @@ function! shrinkmap#viewport#update() "{{{
       \ ', x2 = ' . l:x2
       \)
 
-      call shrinkmap#canvas#allocate(l:canvas, l:x2, l:y, l:view_width)
+      call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
       call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
     endif
 

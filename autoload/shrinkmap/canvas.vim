@@ -1,4 +1,4 @@
-let s:braille_char_offset = 0x2800
+let s:braille_zero = 0x2800
 let s:braille_pixel_map = [
 \  [ 0x01, 0x08 ],
 \  [ 0x02, 0x10 ],
@@ -24,36 +24,42 @@ function! shrinkmap#canvas#braille_width() "{{{
 endfunction " }}}
 
 
-function! shrinkmap#canvas#allocate(canvas, x, y, width) "{{{
-  let l:px = min([a:x / g:shrinkmap_horizontal / s:braille_width, a:width])
+function! shrinkmap#canvas#allocate(canvas, y, x, width) "{{{
+  let l:ay = len(a:canvas)
   let l:py = a:y / s:braille_height
-  let l:canvas_len = len(a:canvas)
+  let l:px = min([a:x / g:shrinkmap_horizontal / s:braille_width, a:width])
 
-  if l:py < l:canvas_len
+  call shrinkmap#debug(2, 'camvas#allocate()' .
+    \': ay = ' . l:ay .
+    \', py = ' . l:py .
+    \', px = ' . l:px
+  \)
+
+  if l:py < l:ay
     call shrinkmap#debug(1, 'camvas#allocate(): py has already allocated')
     let l:cur_len = len(a:canvas[l:py])
     let l:i = l:cur_len
     while l:i <= l:px
-      " px is allocated but short
-      call add(a:canvas[l:py], s:braille_char_offset)
+      call shrinkmap#debug(2, 'camvas#allocate(): px is allocated but short: i = '. l:i)
+      call add(a:canvas[l:py], s:braille_zero)
       let l:i += 1
     endwhile
   else
     call shrinkmap#debug(1, 'camvas#allocate(): py has not allocated yet')
 
-    let l:i = l:canvas_len
+    let l:i = l:ay
     while l:i <= l:py - 1
-      " Allocate blank until py
       call shrinkmap#debug(1, 'camvas#allocate(): Allocate blank until py')
       call add(a:canvas, [])
       let l:i += 1
     endwhile
 
-    " Allocate px on py
+    call shrinkmap#debug(1, 'camvas#allocate(): Allocate px on py')
     let l:row = []
     let l:i = 0
     while l:i <= l:px
-      call add(l:row, s:braille_char_offset)
+      call shrinkmap#debug(2, 'camvas#allocate(): Allocate px: i = ' . l:i)
+      call add(l:row, s:braille_zero)
       let l:i += 1
     endwhile
     call add(a:canvas, l:row)
@@ -76,10 +82,12 @@ function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
 
     call shrinkmap#debug(2,
     \ 'shrinkmap#canvas#draw_line()' .
-    \ ': y = '  . a:y  .
-    \ ', x = '  . l:x  .
-    \ ', py = ' . l:py .
-    \ ', px ='  . l:px
+    \ ': y = '     . a:y     .
+    \ ', x = '     . l:x     .
+    \ ', py = '    . l:py    .
+    \ ', px ='     . l:px    .
+    \ ', y_mod ='  . l:y_mod .
+    \ ', x_mod ='  . l:x_mod
     \)
 
     let a:canvas[l:py][l:px] += s:braille_pixel_map[l:y_mod][l:x_mod]
