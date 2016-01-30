@@ -11,9 +11,9 @@ if !exists('g:shrinkmap_window_width')
   let g:shrinkmap_window_width = 25 "braille characters
 endif
 
-if !exists('g:shrinkmap_horizontal')
+if !exists('g:shrinkmap_horizontal_shrink')
   " A large number contributes drawing speed but loses expression.
-  let g:shrinkmap_horizontal = 2 "characters drawn as a braille dot
+  let g:shrinkmap_horizontal_shrink = 2 "characters drawn as a braille dot
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')
