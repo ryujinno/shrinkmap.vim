@@ -100,6 +100,7 @@ function! shrinkmap#viewport#update() "{{{
   normal! gg
 
   " Set buffer variables for mouse click at on_cursor_moved()
+  let b:context       = l:context
   let b:src_center    = l:src_center
   let b:src_top       = l:src_top
   let b:src_bottom    = l:src_bottom
