@@ -94,7 +94,10 @@ function! shrinkmap#viewport#update() "{{{
   call append(0, shrinkmap#canvas#get_frame(l:canvas, l:view_width))
 
   " Highlight
-  execute 'match CursorLine /\%>' . l:hilite_top . 'l\%<' . (l:hilite_bottom + 1) . 'l./'
+  execute 'match ' . g:shrinkmap_highlight_name . ' /' .
+    \ '\%>' . l:hilite_top          . 'l' .
+    \ '\%<' . (l:hilite_bottom + 1) . 'l' .
+  \'./'
 
   " Scroll
   normal! gg

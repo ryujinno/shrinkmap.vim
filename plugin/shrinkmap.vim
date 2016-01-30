@@ -25,6 +25,11 @@ if !exists('g:shrinkmap_lazy_limit_count')
   let g:shrinkmap_lazy_limit_count = 8 "times
 endif
 
+if !exists('g:shrinkmap_highlight_name')
+  "let g:shrinkmap_highlight_name = 'Visual'
+  let g:shrinkmap_highlight_name = 'CursorLine'
+endif
+
 if !exists('g:shrinkmap_debug')
   let g:shrinkmap_debug = 0
 endif
