@@ -35,40 +35,40 @@ If you changed it with `mapleader` in `${HOME}/.vimrc`, use the key.
 Write configuration to `${HOME}/.vimrc` as usual in VIM.
 The following are configurable options:
 
-`g:shrinkmap_sidebar_width`
-: Sidebar window width, which is max number of Braille characters in a line.
-  A Braille character has 2 dots in a width.
+* `g:shrinkmap_sidebar_width`
+    * Sidebar window width, which is max number of Braille characters in a line.
+      A Braille character has 2 dots in a width.
 
 ```VimL
 let g:shrinkmap_sidebar_width = 25 "Braille characters
 ```
 
-`g:shrinkmap_horizontal_shrink`
-:    Characters drawn as a Braille dot.
-     A large number contributesdrawing speed but loses expression.
+* `g:shrinkmap_horizontal_shrink`
+    * Characters drawn as a Braille dot.
+      A large number contributesdrawing speed but loses expression.
 
 ```VimL
 let g:shrinkmap_horizontal_shrink = 2 "characters
 ```
 
-`g:shrinkmap_lazy_limit_time`
-:    Limit second for lazy drawing.
+* `g:shrinkmap_lazy_limit_time`
+    * Limit second for lazy drawing.
 
 ```VimL
 let g:shrinkmap_lazy_limit_time  = 0.25 "second
 ```
 
-`g:shrinkmap_lazy_limit_count`
-:   Limit counts for lazy drawing.
-    Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
+* `g:shrinkmap_lazy_limit_count`
+    * Limit counts for lazy drawing.
+      Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
 
 ```VimL
 let g:shrinkmap_lazy_limit_count = 8 "times
 ```
 
-`g:shrinkmap_highlight_name`
-:   Name of higilighting the current window in ShrinkMap sidebar.
-    "CursorLine", "Visual" and so on. Refer to :highlight command.
+* `g:shrinkmap_highlight_name`
+    * Name of higilighting the current window in ShrinkMap sidebar.
+      "CursorLine", "Visual" and so on. Refer to :highlight command.
 
 ```VimL
 let g:shrinkmap_highlight_name = 'CursorLine'
