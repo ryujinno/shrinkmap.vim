@@ -7,13 +7,13 @@ set cpo&vim
 
 
 if !exists('g:shrinkmap_sidebar_width')
-  " A braille character has 2 dots.
-  let g:shrinkmap_sidebar_width = 25 "braille characters
+  let g:shrinkmap_sidebar_width = 25 "Braille characters
+  " A Braille character has 2 dots in width
 endif
 
 if !exists('g:shrinkmap_horizontal_shrink')
+  let g:shrinkmap_horizontal_shrink = 2 "characters drawn as a Braille dot
   " A large number contributes drawing speed but loses expression.
-  let g:shrinkmap_horizontal_shrink = 2 "characters drawn as a braille dot
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')
@@ -21,13 +21,13 @@ if !exists('g:shrinkmap_lazy_limit_time')
 endif
 
 if !exists('g:shrinkmap_lazy_limit_count')
-  " Suitable value is multiplied by g:shrinkmap_horizontal.
   let g:shrinkmap_lazy_limit_count = 8 "times
+  " Suitable value is multiplied by g:shrinkmap_horizontal_shrink.
 endif
 
 if !exists('g:shrinkmap_highlight_name')
-  "let g:shrinkmap_highlight_name = 'Visual'
   let g:shrinkmap_highlight_name = 'CursorLine'
+  "let g:shrinkmap_highlight_name = 'Visual'
 endif
 
 if !exists('g:shrinkmap_debug')
