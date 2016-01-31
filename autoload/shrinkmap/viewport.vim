@@ -62,8 +62,8 @@ function! shrinkmap#viewport#update() "{{{
   let l:lines = getline(l:src_top, l:src_bottom)
   for l:line in l:lines
     let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
-    let l:x1     = strdisplaywidth(l:indent)
-    let l:x2     = strdisplaywidth(l:line)
+    let l:x1     = strdisplaywidth(l:indent) / g:shrinkmap_horizontal_shrink
+    let l:x2     = strdisplaywidth(l:line)   / g:shrinkmap_horizontal_shrink
 
     if l:x1 < l:x2
       call shrinkmap#debug(2,
