@@ -7,27 +7,32 @@ set cpo&vim
 
 
 if !exists('g:shrinkmap_sidebar_width')
+  " Sidebar window width, which is max number of Braille characters in a line.
+  " A Braille character has 2 dots in a width.
   let g:shrinkmap_sidebar_width = 25 "Braille characters
-  " A Braille character has 2 dots in width
 endif
 
 if !exists('g:shrinkmap_horizontal_shrink')
-  let g:shrinkmap_horizontal_shrink = 2 "characters drawn as a Braille dot
+  " Characters drawn as a Braille dot.
   " A large number contributes drawing speed but loses expression.
+  let g:shrinkmap_horizontal_shrink = 2 "characters
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')
-  let g:shrinkmap_lazy_limit_time  = 0.25 "sec
+  " Limit second for lazy drawing.
+  let g:shrinkmap_lazy_limit_time  = 0.25 "second
 endif
 
 if !exists('g:shrinkmap_lazy_limit_count')
+  " Limit counts for lazy drawing.
+  " Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
   let g:shrinkmap_lazy_limit_count = 8 "times
-  " Suitable value is multiplied by g:shrinkmap_horizontal_shrink.
 endif
 
 if !exists('g:shrinkmap_highlight_name')
+  " Name of higilighting the current window in ShrinkMap sidebar.
+  " "CursorLine", "Visual" and so on. Refer to :highlight command.
   let g:shrinkmap_highlight_name = 'CursorLine'
-  "let g:shrinkmap_highlight_name = 'Visual'
 endif
 
 if !exists('g:shrinkmap_debug')
@@ -39,6 +44,7 @@ command! ShrinkMapToggle call shrinkmap#toggle()
 command! ShrinkMapOpen   call shrinkmap#open()
 command! ShrinkMapClose  call shrinkmap#close()
 command! ShrinkMapUpdate call shrinkmap#viewport#update()
+
 
 nnoremap <silent> <Leader>ss :<C-U>ShrinkMapToggle<CR>
 nnoremap <silent> <Leader>so :<C-U>ShrinkMapOpen<CR>
