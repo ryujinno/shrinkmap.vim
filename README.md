@@ -5,6 +5,7 @@ The screenshot is:
 
 ![Screenshot](https://raw.githubusercontent.com/ryujinno/shrinkmap.vim/master/image/shrinkmap.png)
 
+
 ## Features
 
 ShrinkMap.vim has features of:
@@ -15,6 +16,7 @@ ShrinkMap.vim has features of:
 * Scaling lines horizontally for speed and to save window width
 * Drawing only the sidebar viewport for performance
 * Lazy drawing for speed
+
 
 ## Commands and Keymaps
 
@@ -30,6 +32,7 @@ The following commands and keymaps are available:
 Note that "\\" is a default `<Leader>` of VIM.
 If you changed it with `mapleader` in `${HOME}/.vimrc`, use the key.
 
+
 ## Options
 
 Write configuration to `${HOME}/.vimrc` as usual in VIM.
@@ -42,10 +45,12 @@ The following are configurable options:
       A Braille character has 2 dots in a width.
       Sidebar window applies for this value when open.
   </dd>
+</dl>
 
 ```VimL
 let g:shrinkmap_sidebar_width = 25 "Braille characters
 ```
+
 
 <dl>
   <dt>g:shrinkmap_horizontal_shrink</dt>
@@ -59,6 +64,7 @@ let g:shrinkmap_sidebar_width = 25 "Braille characters
 let g:shrinkmap_horizontal_shrink = 2 "characters
 ```
 
+
 <dl>
   <dt>g:shrinkmap_lazy_limit_time</dt>
   <dd>
@@ -69,6 +75,7 @@ let g:shrinkmap_horizontal_shrink = 2 "characters
 ```VimL
 let g:shrinkmap_lazy_limit_time  = 0.25 "second
 ```
+
 
 <dl>
   <dt>g:shrinkmap_lazy_limit_count</dt>
@@ -82,6 +89,7 @@ let g:shrinkmap_lazy_limit_time  = 0.25 "second
 let g:shrinkmap_lazy_limit_count = 8 "times
 ```
 
+
 <dl>
   <dt>g:shrinkmap_highlight_name</dt>
   <dd>Name of higilighting the current window in ShrinkMap sidebar.
@@ -92,6 +100,7 @@ let g:shrinkmap_lazy_limit_count = 8 "times
 let g:shrinkmap_highlight_name = 'CursorLine'
 ```
 
+
 ## Contributing
 
 1. Fork it ( https://github.com/ryujinno/shrinkmap.vim/fork )
@@ -99,6 +108,7 @@ let g:shrinkmap_highlight_name = 'CursorLine'
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
 
 ## License
 
