@@ -3,7 +3,7 @@
 ShrinkMap is VIM plug-in to show shrinked current buffer in the sidebar.
 The screenshot is:
 
-![Screenshot](../image/shrinkmap.png)
+![Screenshot](https://raw.githubusercontent.com/ryujinno/shrinkmap.vim/master/image/shrinkmap.png)
 
 ## Features
 
