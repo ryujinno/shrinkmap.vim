@@ -6,9 +6,9 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-if !exists('g:shrinkmap_window_width')
+if !exists('g:shrinkmap_sidebar_width')
   " A braille character has 2 dots.
-  let g:shrinkmap_window_width = 25 "braille characters
+  let g:shrinkmap_sidebar_width = 25 "braille characters
 endif
 
 if !exists('g:shrinkmap_horizontal_shrink')

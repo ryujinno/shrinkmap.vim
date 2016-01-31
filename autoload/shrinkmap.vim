@@ -30,7 +30,7 @@ function! shrinkmap#open() "{{{
   let l:cur_win = winnr()
 
   " Open window
-  execute 'botright ' g:shrinkmap_window_width ' vnew ' s:buf_name
+  execute 'botright ' g:shrinkmap_sidebar_width ' vnew ' s:buf_name
 
   call s:set_buffer()
   call shrinkmap#handler#reset(1)
