@@ -22,7 +22,7 @@ The following commands and keymaps are available:
 
 | Command           | Keymap | Description                     |
 |-------------------|--------|---------------------------------|
-| `ShrinkMapToggle` | \\ss   | Open or Close ShrinkMap sidebar |
+| `ShrinkMapToggle` | \\ss   | Open or close ShrinkMap sidebar |
 | `ShrinkMapOpen`   | \\so   | Open ShrinkMap sidebar          |
 | `ShrinkMapClose`  | \\sc   | Close ShrinkMap sidebar         |
 | `ShrinkMapUpdate` | \\su   | Draw [Braille patterns](https://en.wikipedia.org/wiki/Braille_Patterns) to ShrinkMap sidebar and highlight the current window in ShinkMap sidebar |
