@@ -49,9 +49,9 @@ if !exists('g:shrinkmap_debug')
 endif
 
 
-command! ShrinkMapToggle call shrinkmap#toggle()
-command! ShrinkMapOpen   call shrinkmap#open()
-command! ShrinkMapClose  call shrinkmap#close()
+command! ShrinkMapToggle call shrinkmap#sidebar#toggle()
+command! ShrinkMapOpen   call shrinkmap#sidebar#open()
+command! ShrinkMapClose  call shrinkmap#sidebar#close()
 command! ShrinkMapUpdate call shrinkmap#viewport#update()
 
 

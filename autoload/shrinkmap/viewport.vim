@@ -1,16 +1,11 @@
 function! shrinkmap#viewport#update() "{{{
   " Check current buffer
-  let l:bufname = bufname('%')
-  if l:bufname ==# shrinkmap#buf_name() ||
-    \l:bufname ==# '[Command Line]'     ||
-    \l:bufname =~ '^vimfiler:'          ||
-    \l:bufname =~ '^\[unite\]'          ||
-    \l:bufname =~ '^NERD_tree'
-    return
-  endif
-
-  " Check shrinkmap buffer
-  if l:bufname ==# shrinkmap#buf_name()
+  let l:buf_name = bufname('%')
+  if l:buf_name ==# shrinkmap#buf_name() ||
+    \l:buf_name ==# '[Command Line]'     ||
+    \l:buf_name =~ '^vimfiler:'          ||
+    \l:buf_name =~ '^\[unite\]'          ||
+    \l:buf_name =~ '^NERD_tree'
     return
   endif
 
