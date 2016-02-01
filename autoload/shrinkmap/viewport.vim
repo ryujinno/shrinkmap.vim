@@ -4,7 +4,7 @@ function! shrinkmap#viewport#update() "{{{
   if l:bufname ==# shrinkmap#buf_name() ||
     \l:bufname ==# '[Command Line]'     ||
     \l:bufname =~ '^vimfiler:'          ||
-    \l:bufname =~ '^\[Unite\]'          ||
+    \l:bufname =~ '^\[unite\]'          ||
     \l:bufname =~ '^NERD_tree'
     return
   endif
