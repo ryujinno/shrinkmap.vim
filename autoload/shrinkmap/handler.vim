@@ -17,6 +17,8 @@ function! shrinkmap#handler#reset(set) "{{{
       autocmd CursorHold,CursorHoldI   * call s:on_cursor_hold()
     endif
   augroup END
+
+  let s:lazy_count = 0
 endfunction "}}}
 
 

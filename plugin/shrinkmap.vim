@@ -6,6 +6,12 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+if !exists('g:shrinkmap_sidebar_align')
+  " Alignment of sidebar window: "right", "left"
+  " Sidebar window applies for this value when open.
+  let g:shrinkmap_sidebar_align = 'right'
+endif
+
 if !exists('g:shrinkmap_sidebar_width')
   " Sidebar window width, which is max number of Braille characters in a line.
   " A Braille character has 2 dots in a width.
@@ -16,7 +22,15 @@ endif
 if !exists('g:shrinkmap_horizontal_shrink')
   " Characters drawn as a Braille dot.
   " A large number contributes drawing speed but loses expression.
-  let g:shrinkmap_horizontal_shrink = 2 "characters
+  " ShrinkMap applies for this value when update.
+  let g:shrinkmap_horizontal_shrink = 2 "characters in a Braille dot
+endif
+
+if !exists('g:shrinkmap_highlight_name')
+  " Name of higilighting the current window in ShrinkMap sidebar.
+  " "CursorLine", "Visual" and so on. Refer to :highlight command.
+  " ShrinkMap applies for this value when update.
+  let g:shrinkmap_highlight_name = 'CursorLine'
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')
@@ -28,12 +42,6 @@ if !exists('g:shrinkmap_lazy_limit_count')
   " Limit counts for lazy drawing.
   " Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
   let g:shrinkmap_lazy_limit_count = 8 "times
-endif
-
-if !exists('g:shrinkmap_highlight_name')
-  " Name of higilighting the current window in ShrinkMap sidebar.
-  " "CursorLine", "Visual" and so on. Refer to :highlight command.
-  let g:shrinkmap_highlight_name = 'CursorLine'
 endif
 
 if !exists('g:shrinkmap_debug')
