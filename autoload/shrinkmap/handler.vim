@@ -18,7 +18,8 @@ function! shrinkmap#handler#reset(set) "{{{
     endif
   augroup END
 
-  let s:lazy_count = 0
+  let s:lazy_count     = 0
+  let s:text_processed = 0
 endfunction "}}}
 
 
