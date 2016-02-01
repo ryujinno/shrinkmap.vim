@@ -83,7 +83,13 @@ function! shrinkmap#sidebar#close() "{{{
   " Move to shrinkmap window
   execute l:sm_win 'wincmd w'
 
-  " Get adjustment of window number
+  " Unset handler
+  call shrinkmap#handler#reset(0)
+
+  " Close shrinkmap window
+  close
+
+  " Adjust current window number
   if s:sidebar_align ==# 'right'
     let l:adjust = 0
   elseif s:sidebar_align ==# 'left'
@@ -96,12 +102,6 @@ function! shrinkmap#sidebar#close() "{{{
     \)
     return
   endif
-
-  close
-
-  call shrinkmap#handler#reset(0)
-
-  " Adjust current window number
   let l:cur_win += l:adjust
 
   " Resume window
