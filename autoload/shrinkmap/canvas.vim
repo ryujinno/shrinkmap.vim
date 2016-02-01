@@ -29,35 +29,35 @@ function! shrinkmap#canvas#allocate(canvas, y, x, width) "{{{
   let l:y_char   = a:y / s:braille_height
   let l:x_char   = min([a:x / s:braille_width, a:width])
 
-  call shrinkmap#debug(2, 'camvas#allocate()' .
+  call shrinkmap#debug(2, 'shrinkmap#canvas#allocate()' .
     \': y_canvas = ' . l:y_canvas             .
     \', y_char = '   . l:y_char               .
     \', x_char = '   . l:x_char
   \)
 
   if l:y_char < l:y_canvas
-    call shrinkmap#debug(1, 'camvas#allocate(): y_char has already allocated')
+    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): y_char has already allocated')
     let l:i = len(a:canvas[l:y_char])
     while l:i <= l:x_char
-      call shrinkmap#debug(2, 'camvas#allocate(): x_char is allocated but short: i = '. l:i)
+      call shrinkmap#debug(2, 'shrinkmap#canvas#allocate(): x_char is allocated but short: i = '. l:i)
       call add(a:canvas[l:y_char], s:braille_zero)
       let l:i += 1
     endwhile
   else
-    call shrinkmap#debug(1, 'camvas#allocate(): y_char has not allocated yet')
+    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): y_char has not allocated yet')
 
     let l:i = l:y_canvas
     while l:i < l:y_char
-      call shrinkmap#debug(0, 'camvas#allocate(): Internal error: Allocate blank until y_char')
+      call shrinkmap#debug(0, 'shrinkmap#canvas#allocate(): Internal error: Allocate blank until y_char')
       call add(a:canvas, [])
       let l:i += 1
     endwhile
 
-    call shrinkmap#debug(1, 'camvas#allocate(): Allocate x_char on y_char')
+    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): Allocate x_char on y_char')
     let l:row = []
     let l:i = 0
     while l:i <= l:x_char
-      call shrinkmap#debug(2, 'camvas#allocate(): Allocate x_char: i = ' . l:i)
+      call shrinkmap#debug(2, 'shrinkmap#canvas#allocate(): Allocate x_char: i = ' . l:i)
       call add(l:row, s:braille_zero)
       let l:i += 1
     endwhile

@@ -23,7 +23,7 @@ endfunction "}}}
 
 
 function! s:on_win_enter() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_win_enter()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_win_enter()')
 
   " Check window count
   if winnr('$') == 1
@@ -33,14 +33,14 @@ endfunction "}}}
 
 
 function! s:on_buf_win_enter() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_buf_win_enter()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_buf_win_enter()')
 
   call shrinkmap#viewport#update()
 endfunction "}}}
 
 
 function! s:on_insert() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_insert()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_insert()')
 
   call shrinkmap#viewport#update()
   let s:text_processed = 0
@@ -48,7 +48,7 @@ endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_text_changed()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_text_changed()')
 
   if !s:too_hot()
     call shrinkmap#viewport#update()
@@ -61,10 +61,10 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_cursor_moved()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved()')
 
   if bufname('%') !=# shrinkmap#buf_name()
-    call shrinkmap#debug(2, 'shrinkmap/handler: Cursor moved in the other buffer')
+    call shrinkmap#debug(2, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in the other buffer')
 
     if !s:too_hot()
       call shrinkmap#viewport#update()
@@ -75,16 +75,13 @@ function! s:on_cursor_moved() "{{{
     let l:mouse_lnum = v:mouse_lnum
 
     if l:mouse_win == 0
-      call shrinkmap#debug(1, 'shrinkmap/handler: Got focus of shrinkmap window')
+      call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Got focus of shrinkmap window')
 
       " Move to previous window to drop focus
       wincmd p
     else
-      call shrinkmap#debug(1, 'shrinkmap/handler: Mouse clicked in shrinkmap window')
-      if exists('b:hilite_top')
-        call shrinkmap#viewport#scroll(l:mouse_lnum)
-      endif
-
+      call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Mouse clicked in shrinkmap window')
+      call shrinkmap#viewport#scroll(l:mouse_lnum)
       call shrinkmap#viewport#update()
     endif
   endif
@@ -92,7 +89,7 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved_on_insert() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_cursor_moved_on_insert()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved_on_insert()')
 
   if !s:too_hot()
     call shrinkmap#viewport#update()
@@ -101,14 +98,14 @@ endfunction "}}}
 
 
 function! s:on_resized() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_resized()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_resized()')
 
   call shrinkmap#viewport#update()
 endfunction "}}}
 
 
 function! s:on_cursor_hold() "{{{
-  call shrinkmap#debug(1, 'shrinkmap/handler: on_cursor_hold()')
+  call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_hold()')
 
   call shrinkmap#viewport#update()
 endfunction "}}}

@@ -136,11 +136,9 @@ function! s:resume_context(context) "{{{
   endif
 endfunction "}}}
 
-function! shrinkmap#viewport#scroll(mouse_line) "{{{
-  call shrinkmap#debug(1, 'shrinkmap#viewport#scroll(): Mouse clicked in shrinkmap window')
-  if exists('b:hilite_top')
-    call shrinkmap#debug(1, 'shrinkmap#viewport#scroll(): Jump to mouse clicked')
 
+function! shrinkmap#viewport#scroll(mouse_line) "{{{
+  if exists('b:hilite_top')
     " Get new source top line
     let l:src_shift = (a:mouse_line - 1) * shrinkmap#canvas#braille_height()
     let l:new_src_top = b:src_top + l:src_shift
