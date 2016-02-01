@@ -15,6 +15,12 @@ function! shrinkmap#sidebar#open() "{{{
     return
   endif
 
+  " Check current buffer
+  if !shrinkmap#current_buffer_is_target()
+    shrinkmap#debug(0, 'Current buffer is not a target of ShrinkMap')
+    return
+  endif
+
   " Get current window
   let l:cur_win = winnr()
 

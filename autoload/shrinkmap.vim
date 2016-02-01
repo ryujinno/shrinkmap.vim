@@ -18,3 +18,16 @@ function! shrinkmap#debug(level, msg) "{{{
   endif
 endfunction "}}}
 
+
+function! shrinkmap#current_buffer_is_target() "{{{
+  let l:buf_name = bufname('%')
+  if l:buf_name ==# shrinkmap#buf_name() ||
+    \l:buf_name ==# '[Command Line]'     ||
+    \l:buf_name =~ '^vimfiler:'          ||
+    \l:buf_name =~ '^\[unite\]'          ||
+    \l:buf_name =~ '^NERD_tree'
+    return 0
+  else
+    return 1
+  endif
+endfunction "}}}
