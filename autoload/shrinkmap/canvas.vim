@@ -25,81 +25,68 @@ endfunction " }}}
 
 
 function! shrinkmap#canvas#allocate(canvas, y, x, width) "{{{
-  let l:y_canvas = len(a:canvas)
-  let l:y_char   = a:y / s:braille_height
-  let l:x_char   = min([a:x / s:braille_width, a:width])
+  let l:y_char = a:y / s:braille_height
+  let l:x_char = min([a:x, a:width])
 
-  call shrinkmap#debug(2, 'shrinkmap#canvas#allocate()' .
-    \': y_canvas = ' . l:y_canvas             .
-    \', y_char = '   . l:y_char               .
-    \', x_char = '   . l:x_char
-  \)
+  if g:shrinkmap_debug >= 2
+    call shrinkmap#debug(2,
+    \ 'shrinkmap#canvas#allocate_line()' .
+    \ ': y_char = ' . l:y_char           .
+    \ ', x_char = ' . l:x_char
+    \)
+  endif
 
-  if l:y_char < l:y_canvas
-    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): y_char has already allocated')
-    let l:i = len(a:canvas[l:y_char])
-    while l:i <= l:x_char
-      call shrinkmap#debug(2, 'shrinkmap#canvas#allocate(): x_char is allocated but short: i = '. l:i)
-      call add(a:canvas[l:y_char], s:braille_zero)
-      let l:i += 1
-    endwhile
-  else
-    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): y_char has not allocated yet')
+  " Allocate y
+  let l:y = len(a:canvas)
+  while l:y <= l:y_char
+    call add(a:canvas, [])
+    let l:y += 1
+  endwhile
 
-    let l:i = l:y_canvas
-    while l:i < l:y_char
-      call shrinkmap#debug(0, 'shrinkmap#canvas#allocate(): Internal error: Allocate blank until y_char')
-      call add(a:canvas, [])
-      let l:i += 1
-    endwhile
+  " Allocate x
+  let l:canvas_row = a:canvas[l:y_char]
+  let l:i = len(l:canvas_row)
+  while l:i <= l:x_char
+    call add(l:canvas_row, s:braille_zero)
+    let l:i += 1
+  endwhile
 
-    call shrinkmap#debug(1, 'shrinkmap#canvas#allocate(): Allocate x_char on y_char')
-    let l:row = []
-    let l:i = 0
-    while l:i <= l:x_char
-      call shrinkmap#debug(2, 'shrinkmap#canvas#allocate(): Allocate x_char: i = ' . l:i)
-      call add(l:row, s:braille_zero)
-      let l:i += 1
-    endwhile
-    call add(a:canvas, l:row)
-  end
-
-  return a:canvas
 endfunction "}}}
 
-
 function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
-  let l:y_char   = a:y / s:braille_height
-  let canvas_row = a:canvas[l:y_char]
-  let l:y_mod    = a:y % s:braille_height
-  let l:x_dot1   = min([a:x1, a:width * s:braille_width])
-  let l:x_dot2   = min([a:x2, a:width * s:braille_width])
-  call shrinkmap#debug(2,
-  \ 'shrinkmap#canvas#draw_line()'            .
-  \ ': y_canvas = ' . len(a:canvas)           .
-  \ ', x_canvas = ' . len(a:canvas[l:y_char]) .
-  \ ', y  = '       . a:y                     .
-  \ ', x1 = '       . a:x1                    .
-  \ ', x2 = '       . a:x2                    .
-  \ ', x_dot1 = '   . l:x_dot1                .
-  \ ', x_dot2 = '   . l:x_dot2
-  \)
+  let l:y_char     = a:y / s:braille_height
+  let l:y_mod      = a:y % s:braille_height
+  let l:x_dot1     = min([a:x1, a:width * s:braille_width])
+  let l:x_dot2     = min([a:x2, a:width * s:braille_width])
+  let l:canvas_row = a:canvas[l:y_char]
+
+  if g:shrinkmap_debug >= 2
+    call shrinkmap#debug(2,
+    \ 'shrinkmap#canvas#draw_line()'      .
+    \ ': y_canvas = ' . len(a:canvas)     .
+    \ ', x_canvas = ' . len(l:canvas_row) .
+    \ ', x_dot1 = '   . l:x_dot1          .
+    \ ', x_dot2 = '   . l:x_dot2
+    \)
+  endif
 
   let l:x_dot = l:x_dot1
   while l:x_dot <= l:x_dot2
     let l:x_char = l:x_dot / s:braille_width
     let l:x_mod  = l:x_dot % s:braille_width
 
-    call shrinkmap#debug(2,
-    \ 'shrinkmap#canvas#draw_line()' .
-    \ ': x_dot = '  . l:x_dot        .
-    \ ', y_char = ' . l:y_char       .
-    \ ', x_char = ' . l:x_char       .
-    \ ', y_mod = '  . l:y_mod        .
-    \ ', x_mod = '  . l:x_mod
-    \)
+    if g:shrinkmap_debug >= 2
+      call shrinkmap#debug(2,
+      \ 'shrinkmap#canvas#draw_line()' .
+      \ ': x_dot = '  . l:x_dot        .
+      \ ', y_char = ' . l:y_char       .
+      \ ', x_char = ' . l:x_char       .
+      \ ', y_mod = '  . l:y_mod        .
+      \ ', x_mod = '  . l:x_mod
+      \)
+    endif
 
-    let canvas_row[l:x_char] += s:braille_pixel_map[l:y_mod][l:x_mod]
+    let l:canvas_row[l:x_char] += s:braille_pixel_map[l:y_mod][l:x_mod]
 
     let l:x_dot += 1
   endwhile

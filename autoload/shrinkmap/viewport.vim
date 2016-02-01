@@ -60,17 +60,17 @@ function! shrinkmap#viewport#update() "{{{
     let l:x1     = strdisplaywidth(l:indent) / g:shrinkmap_horizontal_shrink
     let l:x2     = strdisplaywidth(l:line)   / g:shrinkmap_horizontal_shrink
 
-    if l:x1 < l:x2
+    if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
       \ 'shrinkmap#viewport#update()' .
       \ ': y = '  . l:y  .
       \ ', x1 = ' . l:x1 .
       \ ', x2 = ' . l:x2
       \)
-
-      call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
-      call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
     endif
+
+    call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
+    call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
 
     let l:y += 1
   endfor
