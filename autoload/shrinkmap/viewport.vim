@@ -44,44 +44,83 @@ function! shrinkmap#viewport#update() "{{{
       \ ', hilite_bottom = ' . l:hilite_bottom
   \)
 
-  " Init canvas
-  let l:canvas = shrinkmap#canvas#init()
+  " Move to shrinkmap window and buffer
+  execute l:sm_win 'wincmd w'
+  execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  " Draw line on canvas
-  let l:y = 0
-  let l:lines = getline(l:src_top, l:src_bottom)
-  for l:line in l:lines
-    let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
-    let l:x1     = strdisplaywidth(l:indent) / g:shrinkmap_horizontal_shrink
-    let l:x2     = strdisplaywidth(l:line)   / g:shrinkmap_horizontal_shrink
+  " Get previous buffer variables
+  if exists('b:context')
+    let l:prev_context       = b:context
+    let l:prev_src_center    = b:src_center
+    let l:prev_src_top       = b:src_top
+    let l:prev_src_bottom    = b:src_bottom
+    let l:prev_hilite_top    = b:hilite_top
+    let l:prev_hilite_bottom = b:hilite_bottom
+  else
+    let l:prev_context       = -1
+    let l:prev_src_center    = -1
+    let l:prev_src_top       = -1
+    let l:prev_src_bottom    = -1
+    let l:prev_hilite_top    = -1
+    let l:prev_hilite_bottom = -1
+  endif
 
-    if g:shrinkmap_debug >= 2
-      call shrinkmap#debug(2,
-      \ 'shrinkmap#viewport#update()' .
-      \ ': y = '  . l:y  .
-      \ ', x1 = ' . l:x1 .
-      \ ', x2 = ' . l:x2
-      \)
-    endif
+  " Set buffer variables
+  let b:context       = l:context
+  let b:src_center    = l:src_center
+  let b:src_top       = l:src_top
+  let b:src_bottom    = l:src_bottom
+  let b:hilite_top    = l:hilite_top
+  let b:hilite_bottom = l:hilite_bottom
 
-    call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
-    call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
+  " Resume to current window
+  execute l:context.cur_win 'wincmd w'
 
-    let l:y += 1
-  endfor
+  if l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
+    " Init canvas
+    let l:canvas = shrinkmap#canvas#init()
+
+    " Draw line on canvas
+    let l:y = 0
+    let l:lines = getline(l:src_top, l:src_bottom)
+    for l:line in l:lines
+      let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
+      let l:x1     = strdisplaywidth(l:indent) / g:shrinkmap_horizontal_shrink
+      let l:x2     = strdisplaywidth(l:line)   / g:shrinkmap_horizontal_shrink
+
+      if g:shrinkmap_debug >= 2
+        call shrinkmap#debug(2,
+        \ 'shrinkmap#viewport#update()' .
+        \ ': y = '  . l:y  .
+        \ ', x1 = ' . l:x1 .
+        \ ', x2 = ' . l:x2
+        \)
+      endif
+
+      call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
+      call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
+
+      let l:y += 1
+    endfor
+  endif
 
   " Move to shrinkmap window and buffer
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  " Start modify
-  setlocal modifiable
+  if l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
+    " Start modify
+    setlocal modifiable
 
-  " Delete shrinkmap buffer
-  silent %delete _
+    " Delete shrinkmap buffer
+    silent %delete _
 
-  " Put canvas to shrinkmap buffer
-  call append(0, shrinkmap#canvas#get_frame(l:canvas, l:view_width))
+    " Put canvas to shrinkmap buffer
+    call append(0, shrinkmap#canvas#get_frame(l:canvas, l:view_width))
+
+    " End modify
+    setlocal nomodifiable
+  endif
 
   " Highlight
   execute 'match ' . g:shrinkmap_highlight_name . ' /' .
@@ -91,17 +130,6 @@ function! shrinkmap#viewport#update() "{{{
 
   " Scroll
   normal! gg
-
-  " Set buffer variables for mouse click at on_cursor_moved()
-  let b:context       = l:context
-  let b:src_center    = l:src_center
-  let b:src_top       = l:src_top
-  let b:src_bottom    = l:src_bottom
-  let b:hilite_top    = l:hilite_top
-  let b:hilite_bottom = l:hilite_bottom
-
-  " End modify
-  setlocal nomodifiable
 
   " Resume context
   call s:resume_context(l:context)
@@ -133,7 +161,25 @@ endfunction "}}}
 
 
 function! shrinkmap#viewport#scroll(mouse_line) "{{{
-  if exists('b:hilite_top')
+  " Move to previous window
+  wincmd p
+
+  " Get current window
+  if !shrinkmap#current_buffer_is_target()
+    return
+  endif
+
+  " Get previous window number
+  let l:prev_win = bufwinnr('%')
+
+  " Move to shrinkmap window
+  let l:sm_win = bufwinnr(shrinkmap#buf_name_pattern())
+  execute l:sm_win 'wincmd w'
+
+  if !exists('b:src_top')
+    " Move to previous window to scroll
+    execute l:prev_win 'wincmd w'
+  else
     " Get new source top line
     let l:src_shift = (a:mouse_line - 1) * shrinkmap#canvas#braille_height()
     let l:new_src_top = b:src_top + l:src_shift
@@ -146,7 +192,7 @@ function! shrinkmap#viewport#scroll(mouse_line) "{{{
     \)
 
     " Move to previous window to scroll
-    wincmd p
+    execute l:prev_win 'wincmd w'
 
     " Jump to mouse clicked
     execute 'normal! ' . l:new_src_top . 'gg'
