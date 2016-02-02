@@ -1,8 +1,3 @@
-let s:reltime        = 0
-let s:lazy_count     = 0
-let s:text_processed = 0
-
-
 function! shrinkmap#handler#reset(set) "{{{
   augroup shrinkmap_group
     autocmd!
@@ -18,8 +13,7 @@ function! shrinkmap#handler#reset(set) "{{{
     endif
   augroup END
 
-  let s:lazy_count     = 0
-  let s:text_processed = 0
+  call s:init_lazy()
 endfunction "}}}
 
 
@@ -44,19 +38,15 @@ function! s:on_insert() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_insert()')
 
   call shrinkmap#viewport#update(1)
-  let s:text_processed = 0
+  call s:init_lazy()
 endfunction "}}}
 
 
 function! s:on_text_changed() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_text_changed()')
 
-  if !s:too_hot()
+  if !s:too_hot(1)
     call shrinkmap#viewport#update(1)
-    let s:text_processed = 1
-    let s:lazy_count += 1
-  else
-    let s:text_processed = 0
   endif
 endfunction "}}}
 
@@ -65,12 +55,10 @@ function! s:on_cursor_moved() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved()')
 
   if bufname('%') !=# shrinkmap#buf_name()
-    call shrinkmap#debug(2, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in the other buffer')
+    call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in the other buffer')
 
-    if !s:too_hot()
+    if !s:too_hot(0)
       call shrinkmap#viewport#update(0)
-    else
-      let s:text_processed = 0
     endif
   else
     let l:mouse      = getchar()
@@ -94,10 +82,8 @@ endfunction "}}}
 function! s:on_cursor_moved_on_insert() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved_on_insert()')
 
-  if !s:too_hot()
+  if !s:too_hot(0)
     call shrinkmap#viewport#update(1)
-  else
-    let s:text_processed = 0
   endif
 endfunction "}}}
 
@@ -116,20 +102,44 @@ function! s:on_cursor_hold() "{{{
 endfunction "}}}
 
 
-function! s:too_hot() "{{{
-  let l:reltime = str2float(reltimestr(reltime()))
+function! s:init_lazy() "{{{
+  let s:reltime        = 0
+  let s:lazy_count     = 0
+  let s:text_processed = 0
+endfunction " }}}
 
-  if l:reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
-    let l:too_hot = 1
-    let s:lazy_count = 0
-  elseif s:text_processed
-    let l:too_hot = 1
+
+function! s:too_hot(double) "{{{
+  if s:text_processed
+    let s:text_processed = 0
+    let l:too_hot        = 1
   else
-    let l:too_hot = 0
-    let s:lazy_count += 1
+    let l:reltime = str2float(reltimestr(reltime()))
+
+    if l:reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
+      let s:lazy_count  = 0
+      let l:too_hot     = 0
+    else
+      let s:lazy_count += 1
+      let l:too_hot     = 1
+    endif
+
+    let s:reltime = l:reltime
   endif
 
-  let s:reltime = l:reltime
+  if a:double
+    let s:text_processed = 1
+  else
+    let s:text_processed = 0
+  end
+
+  call shrinkmap#debug(1,
+  \ 'shrinkmap#handler.too_hot()'            .
+  \ ': double = '         . a:double         .
+  \ ', text_processed = ' . s:text_processed .
+  \ ', lazy_count = '     . s:lazy_count     .
+  \ ', too_hot = '        . l:too_hot
+  \)
 
   return l:too_hot
 endfunction " }}}
