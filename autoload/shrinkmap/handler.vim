@@ -36,14 +36,14 @@ endfunction "}}}
 function! s:on_buf_win_enter() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_buf_win_enter()')
 
-  call shrinkmap#viewport#update()
+  call shrinkmap#viewport#update(1)
 endfunction "}}}
 
 
 function! s:on_insert() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_insert()')
 
-  call shrinkmap#viewport#update()
+  call shrinkmap#viewport#update(1)
   let s:text_processed = 0
 endfunction "}}}
 
@@ -52,7 +52,7 @@ function! s:on_text_changed() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_text_changed()')
 
   if !s:too_hot()
-    call shrinkmap#viewport#update()
+    call shrinkmap#viewport#update(1)
     let s:text_processed = 1
     let s:lazy_count += 1
   else
@@ -68,7 +68,9 @@ function! s:on_cursor_moved() "{{{
     call shrinkmap#debug(2, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in the other buffer')
 
     if !s:too_hot()
-      call shrinkmap#viewport#update()
+      call shrinkmap#viewport#update(0)
+    else
+      let s:text_processed = 0
     endif
   else
     let l:mouse      = getchar()
@@ -83,7 +85,7 @@ function! s:on_cursor_moved() "{{{
     else
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Mouse clicked in shrinkmap window')
       call shrinkmap#viewport#scroll(l:mouse_lnum)
-      call shrinkmap#viewport#update()
+      call shrinkmap#viewport#update(1)
     endif
   endif
 endfunction "}}}
@@ -93,7 +95,9 @@ function! s:on_cursor_moved_on_insert() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved_on_insert()')
 
   if !s:too_hot()
-    call shrinkmap#viewport#update()
+    call shrinkmap#viewport#update(1)
+  else
+    let s:text_processed = 0
   endif
 endfunction "}}}
 
@@ -101,14 +105,14 @@ endfunction "}}}
 function! s:on_resized() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_resized()')
 
-  call shrinkmap#viewport#update()
+  call shrinkmap#viewport#update(1)
 endfunction "}}}
 
 
 function! s:on_cursor_hold() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_hold()')
 
-  call shrinkmap#viewport#update()
+  call shrinkmap#viewport#update(1)
 endfunction "}}}
 
 
@@ -116,12 +120,12 @@ function! s:too_hot() "{{{
   let l:reltime = str2float(reltimestr(reltime()))
 
   if l:reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
-    let l:too_hot = 0
+    let l:too_hot = 1
     let s:lazy_count = 0
   elseif s:text_processed
     let l:too_hot = 1
   else
-    let l:too_hot = 1
+    let l:too_hot = 0
     let s:lazy_count += 1
   endif
 

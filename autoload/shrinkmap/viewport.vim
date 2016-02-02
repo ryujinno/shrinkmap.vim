@@ -1,4 +1,4 @@
-function! shrinkmap#viewport#update() "{{{
+function! shrinkmap#viewport#update(force) "{{{
   " Check current buffer
   if !shrinkmap#current_buffer_is_target()
     return
@@ -36,7 +36,8 @@ function! shrinkmap#viewport#update() "{{{
   let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
   call shrinkmap#debug(1,
       \ 'shrinkmap#viewport#update()' .
-      \ ': view_width = '    . l:view_width  .
+      \ ': force = '         . a:force .
+      \ ', view_width = '    . l:view_width  .
       \ ', view_height = '   . l:view_height .
       \ ', src_top = '       . l:src_top     .
       \ ', src_bottom = '    . l:src_bottom  .
@@ -76,8 +77,10 @@ function! shrinkmap#viewport#update() "{{{
   " Resume to current window
   execute l:context.cur_win 'wincmd w'
 
-  if l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
-    let l:canvas = shrinkmap#canvas#init()
+  " Init canvas
+  let l:canvas = shrinkmap#canvas#init()
+
+  if a:force || l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
     call s:draw_canvas(l:canvas, src_top, src_bottom, l:view_width)
   endif
 
@@ -85,7 +88,7 @@ function! shrinkmap#viewport#update() "{{{
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  if l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
+  if a:force || l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
     " Start modify
     setlocal modifiable
 
