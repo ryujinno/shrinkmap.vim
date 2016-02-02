@@ -77,31 +77,8 @@ function! shrinkmap#viewport#update() "{{{
   execute l:context.cur_win 'wincmd w'
 
   if l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
-    " Init canvas
     let l:canvas = shrinkmap#canvas#init()
-
-    " Draw line on canvas
-    let l:y = 0
-    let l:lines = getline(l:src_top, l:src_bottom)
-    for l:line in l:lines
-      let l:indent = substitute(l:line, '^\(\s*\)\S.*', '\1', '')
-      let l:x1     = strdisplaywidth(l:indent) / g:shrinkmap_horizontal_shrink
-      let l:x2     = strdisplaywidth(l:line)   / g:shrinkmap_horizontal_shrink
-
-      if g:shrinkmap_debug >= 2
-        call shrinkmap#debug(2,
-        \ 'shrinkmap#viewport#update()' .
-        \ ': y = '  . l:y  .
-        \ ', x1 = ' . l:x1 .
-        \ ', x2 = ' . l:x2
-        \)
-      endif
-
-      call shrinkmap#canvas#allocate(l:canvas, l:y, l:x2, l:view_width)
-      call shrinkmap#canvas#draw_line(l:canvas, l:y, l:x1, l:x2, l:view_width)
-
-      let l:y += 1
-    endfor
+    call s:draw_canvas(l:canvas, src_top, src_bottom, l:view_width)
   endif
 
   " Move to shrinkmap window and buffer
@@ -146,6 +123,31 @@ function! s:get_context() "{{{
   let l:context.cur_win = winnr()
 
   return l:context
+endfunction "}}}
+
+
+function! s:draw_canvas(canvas, src_top, src_bottom, view_width) "{{{
+  let l:y = 0
+  let l:i = a:src_top
+  while l:i < a:src_bottom
+    let l:x1 = indent(l:i)                   / g:shrinkmap_horizontal_shrink
+    let l:x2 = strdisplaywidth(getline(l:i)) / g:shrinkmap_horizontal_shrink
+
+    if g:shrinkmap_debug >= 2
+      call shrinkmap#debug(2,
+      \ 'shrinkmap#viewport.draw_canvas()' .
+      \ ': y = '  . l:y  .
+      \ ', x1 = ' . l:x1 .
+      \ ', x2 = ' . l:x2
+      \)
+    endif
+
+    call shrinkmap#canvas#allocate(a:canvas, l:y, l:x2, a:view_width)
+    call shrinkmap#canvas#draw_line(a:canvas, l:y, l:x1, l:x2, a:view_width)
+
+    let l:i += 1
+    let l:y += 1
+  endwhile
 endfunction "}}}
 
 
