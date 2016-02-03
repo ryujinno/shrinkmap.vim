@@ -165,35 +165,24 @@ function! shrinkmap#viewport#jump(mouse_line) "{{{
   " Move to previous window
   wincmd p
 
-  " Get current window
+  " Check current buffer
   if !shrinkmap#current_buffer_is_target()
     return
   endif
 
-  " Get previous window number
-  let l:prev_win = bufwinnr('%')
-
-  " Move to shrinkmap window
-  let l:sm_win = bufwinnr(shrinkmap#buf_name_pattern())
-  execute l:sm_win 'wincmd w'
-
-  if !exists('b:src_top')
-    " Move to previous window
-    execute l:prev_win 'wincmd w'
-  else
+  let l:src_top = getbufvar(shrinkmap#buf_name_pattern(), 'src_top')
+  if l:src_top !=# ''
     " Get new source top line
-    let l:src_shift = (a:mouse_line - 1) * shrinkmap#canvas#braille_height()
-    let l:new_src_top = b:src_top + l:src_shift
+    let l:src_jump = (a:mouse_line - 1) * shrinkmap#canvas#braille_height()
+    let l:new_src_top = l:src_top + l:src_jump
 
     call shrinkmap#debug(1,
       \ 'shrinkmap#viewport#jump()' .
       \ ': mouse_line = '  . a:mouse_line .
-      \ ', src_shift = '   . l:src_shift .
+      \ ', src_top = '     . l:src_top    .
+      \ ', src_jump = '    . l:src_jump   .
       \ ', new_src_top = ' . l:new_src_top
     \)
-
-    " Move to previous window to jump
-    execute l:prev_win 'wincmd w'
 
     " Jump to mouse clicked
     execute 'normal! ' . l:new_src_top . 'gg0'
