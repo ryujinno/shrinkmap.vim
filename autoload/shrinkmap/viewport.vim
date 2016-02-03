@@ -17,10 +17,12 @@ function! shrinkmap#viewport#update(force) "{{{
   let l:braille_height = shrinkmap#canvas#braille_height()
   let l:view_width     = winwidth(l:sm_win)
   let l:view_height    = winheight(l:sm_win)
+  let l:display_top    = line('w0')
+  let l:display_bottom = line('w$')
   let l:bottom         = line('$')
 
   " Get source lines
-  let l:src_center             = (line('w0') + line('w$')) / 2
+  let l:src_center             = (l:display_top + l:display_bottom) / 2
   let l:src_lines_of_half_view = l:view_height * l:braille_height / 2
   let l:src_top                = l:src_center - l:src_lines_of_half_view
   let l:src_bottom             = l:src_center + l:src_lines_of_half_view
@@ -33,8 +35,8 @@ function! shrinkmap#viewport#update(force) "{{{
   endif
 
   " Get highlight lines
-  let l:hilite_top     = max([(line('w0') - l:src_top + 1) / l:braille_height, 1])
-  let l:hilite_bottom  = min([(line('w$') - l:src_top + 1) / l:braille_height, l:view_height])
+  let l:hilite_top     = max([(l:display_top    - l:src_top + 1) / l:braille_height, 1])
+  let l:hilite_bottom  = min([(l:display_bottom - l:src_top + 1) / l:braille_height, l:view_height])
 
   " Move to shrinkmap window and buffer
   execute l:sm_win 'wincmd w'
@@ -56,14 +58,16 @@ function! shrinkmap#viewport#update(force) "{{{
   let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
 
   call shrinkmap#debug(1,
-      \ 'shrinkmap#viewport#update()'          .
-      \ ': force = '         . a:force         .
-      \ ', view_width = '    . l:view_width    .
-      \ ', view_height = '   . l:view_height   .
-      \ ', src_top = '       . l:src_top       .
-      \ ', src_bottom = '    . l:src_bottom    .
-      \ ', hilite_top = '    . l:hilite_top    .
-      \ ', hilite_bottom = ' . l:hilite_bottom .
+      \ 'shrinkmap#viewport#update()'           .
+      \ ': force = '         . a:force          .
+      \ ', view_width = '    . l:view_width     .
+      \ ', view_height = '   . l:view_height    .
+      \ ', display_top = '   . l:display_top    .
+      \ ', display_bottom = '. l:display_bottom .
+      \ ', src_top = '       . l:src_top        .
+      \ ', src_bottom = '    . l:src_bottom     .
+      \ ', hilite_top = '    . l:hilite_top     .
+      \ ', hilite_bottom = ' . l:hilite_bottom  .
       \ ', scrolled = '      . l:scrolled
   \)
 
