@@ -72,7 +72,7 @@ function! s:on_cursor_moved() "{{{
       wincmd p
     else
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Mouse clicked in shrinkmap window')
-      call shrinkmap#viewport#scroll(l:mouse_lnum)
+      call shrinkmap#viewport#jump(l:mouse_lnum)
       call shrinkmap#viewport#update(1)
     endif
   endif

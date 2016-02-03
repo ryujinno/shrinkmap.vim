@@ -12,7 +12,7 @@ ShrinkMap.vim has features of:
 
 * Shrinking the current buffer using [Braille patterns](https://en.wikipedia.org/wiki/Braille_Patterns)
 * Highlighting lines of the current window in the sidebar
-* Scrolling the current buffer by clicking the sidebar
+* Jumping the current buffer by clicking the sidebar
 * Scaling lines horizontally for speed and to save window width
 * Drawing only the sidebar viewport for performance
 * Lazy drawing for speed

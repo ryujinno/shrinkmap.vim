@@ -170,7 +170,7 @@ function! s:resume_context(context) "{{{
 endfunction "}}}
 
 
-function! shrinkmap#viewport#scroll(mouse_line) "{{{
+function! shrinkmap#viewport#jump(mouse_line) "{{{
   " Move to previous window
   wincmd p
 
@@ -187,7 +187,7 @@ function! shrinkmap#viewport#scroll(mouse_line) "{{{
   execute l:sm_win 'wincmd w'
 
   if !exists('b:src_top')
-    " Move to previous window to scroll
+    " Move to previous window
     execute l:prev_win 'wincmd w'
   else
     " Get new source top line
@@ -195,13 +195,13 @@ function! shrinkmap#viewport#scroll(mouse_line) "{{{
     let l:new_src_top = b:src_top + l:src_shift
 
     call shrinkmap#debug(1,
-    \ 'shrinkmap#viewport#scroll()' .
+    \ 'shrinkmap#viewport#jump()' .
     \ ': mouse_line = '  . a:mouse_line .
     \ ', src_shift = '   . l:src_shift .
     \ ', new_src_top = ' . l:new_src_top
     \)
 
-    " Move to previous window to scroll
+    " Move to previous window to jump
     execute l:prev_win 'wincmd w'
 
     " Jump to mouse clicked
