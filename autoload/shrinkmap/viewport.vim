@@ -23,56 +23,48 @@ function! shrinkmap#viewport#update(force) "{{{
   let l:src_center  = (line('w0') + line('w$')) / 2
   let l:src_top     = l:src_center - l:view_height / 2 * l:braille_height
   let l:src_bottom  = l:src_center + l:view_height / 2 * l:braille_height
-  if l:src_top < 0
-    let l:src_top    = 0
+  if l:src_top < 1
+    let l:src_top    = 1
     let l:src_bottom = min([l:view_height * l:braille_height, l:bottom])
   elseif l:src_bottom > l:bottom
-    let l:src_top    = max([l:bottom - l:view_height * l:braille_height, 0])
+    let l:src_top    = max([l:bottom - l:view_height * l:braille_height, 1])
     let l:src_bottom = l:bottom
   endif
 
   " Get highlight lines
-  let l:hilite_top     = max([(line('w0') - l:src_top) / l:braille_height, 0])
-  let l:hilite_bottom  = min([(line('w$') - l:src_top) / l:braille_height + 1, l:view_height])
-  call shrinkmap#debug(1,
-      \ 'shrinkmap#viewport#update()' .
-      \ ': force = '         . a:force .
-      \ ', view_width = '    . l:view_width  .
-      \ ', view_height = '   . l:view_height .
-      \ ', src_top = '       . l:src_top     .
-      \ ', src_bottom = '    . l:src_bottom  .
-      \ ', hilite_top = '    . l:hilite_top  .
-      \ ', hilite_bottom = ' . l:hilite_bottom
-  \)
+  let l:hilite_top     = max([(line('w0') - l:src_top + 1) / l:braille_height, 1])
+  let l:hilite_bottom  = min([(line('w$') - l:src_top + 1) / l:braille_height, l:view_height])
 
   " Move to shrinkmap window and buffer
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
   " Get previous buffer variables
-  if exists('b:context')
-    let l:prev_context       = b:context
-    let l:prev_src_center    = b:src_center
-    let l:prev_src_top       = b:src_top
-    let l:prev_src_bottom    = b:src_bottom
-    let l:prev_hilite_top    = b:hilite_top
-    let l:prev_hilite_bottom = b:hilite_bottom
+  if exists('b:src_top')
+    let l:prev_src_top    = b:src_top
+    let l:prev_src_bottom = b:src_bottom
   else
-    let l:prev_context       = -1
-    let l:prev_src_center    = -1
-    let l:prev_src_top       = -1
-    let l:prev_src_bottom    = -1
-    let l:prev_hilite_top    = -1
-    let l:prev_hilite_bottom = -1
+    let l:prev_src_top    = -1
+    let l:prev_src_bottom = -1
   endif
 
   " Set buffer variables
-  let b:context       = l:context
-  let b:src_center    = l:src_center
-  let b:src_top       = l:src_top
-  let b:src_bottom    = l:src_bottom
-  let b:hilite_top    = l:hilite_top
-  let b:hilite_bottom = l:hilite_bottom
+  let b:src_top    = l:src_top
+  let b:src_bottom = l:src_bottom
+
+  let l:is_scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
+
+  call shrinkmap#debug(1,
+      \ 'shrinkmap#viewport#update()'          .
+      \ ': force = '         . a:force         .
+      \ ', view_width = '    . l:view_width    .
+      \ ', view_height = '   . l:view_height   .
+      \ ', src_top = '       . l:src_top       .
+      \ ', src_bottom = '    . l:src_bottom    .
+      \ ', hilite_top = '    . l:hilite_top    .
+      \ ', hilite_bottom = ' . l:hilite_bottom .
+      \ ', is_scrolled = '   . l:is_scrolled
+  \)
 
   " Resume to current window
   execute l:context.cur_win 'wincmd w'
@@ -80,7 +72,7 @@ function! shrinkmap#viewport#update(force) "{{{
   " Init canvas
   let l:canvas = shrinkmap#canvas#init()
 
-  if a:force || l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
+  if a:force || l:is_scrolled
     call s:draw_canvas(l:canvas, src_top, src_bottom, l:view_width)
   endif
 
@@ -88,7 +80,7 @@ function! shrinkmap#viewport#update(force) "{{{
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  if a:force || l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom
+  if a:force || l:is_scrolled
     " Start modify
     setlocal modifiable
 
@@ -104,12 +96,12 @@ function! shrinkmap#viewport#update(force) "{{{
 
   " Highlight
   execute 'match ' . g:shrinkmap_highlight_name . ' /' .
-    \ '\%>' . l:hilite_top          . 'l' .
+    \ '\%>' . (l:hilite_top    - 1) . 'l' .
     \ '\%<' . (l:hilite_bottom + 1) . 'l' .
   \'./'
 
-  " Scroll
-  normal! gg
+  " Move calet to topleft
+  normal! gg0
 
   " Resume context
   call s:resume_context(l:context)
@@ -130,26 +122,34 @@ endfunction "}}}
 
 
 function! s:draw_canvas(canvas, src_top, src_bottom, view_width) "{{{
-  let l:y = 0
+  let l:x_max_dot = a:view_width * shrinkmap#canvas#braille_width() - 1
+  let l:y_dot = 0
   let l:i = a:src_top
-  while l:i < a:src_bottom
-    let l:x1 = indent(l:i)                   / g:shrinkmap_horizontal_shrink
-    let l:x2 = strdisplaywidth(getline(l:i)) / g:shrinkmap_horizontal_shrink
+  while l:i <= a:src_bottom
+    let l:indent_len = indent(l:i)
+    let l:line_len   = strdisplaywidth(getline(l:i))
+    let l:x_dot_start = min([l:indent_len     / g:shrinkmap_horizontal_shrink, l:x_max_dot])
+    let l:x_dot_end   = min([(l:line_len - 1) / g:shrinkmap_horizontal_shrink, l:x_max_dot])
 
     if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
       \ 'shrinkmap#viewport.draw_canvas()' .
-      \ ': y = '  . l:y  .
-      \ ', x1 = ' . l:x1 .
-      \ ', x2 = ' . l:x2
+      \ ': y_dot = '       . l:y_dot       .
+      \ ', indent_len = '  . l:indent_len  .
+      \ ', line_len = '    . l:line_len    .
+      \ ', x_max_dot = '   . l:x_max_dot   .
+      \ ', x_dot_start = ' . l:x_dot_start .
+      \ ', x_dot_end = '   . l:x_dot_end
       \)
     endif
 
-    call shrinkmap#canvas#allocate(a:canvas, l:y, l:x2, a:view_width)
-    call shrinkmap#canvas#draw_line(a:canvas, l:y, l:x1, l:x2, a:view_width)
+    if l:indent_len < l:line_len
+      call shrinkmap#canvas#allocate(a:canvas, l:y_dot, l:x_dot_end)
+      call shrinkmap#canvas#draw_line(a:canvas, l:y_dot, l:x_dot_start, l:x_dot_end)
+    endif
 
     let l:i += 1
-    let l:y += 1
+    let l:y_dot += 1
   endwhile
 endfunction "}}}
 

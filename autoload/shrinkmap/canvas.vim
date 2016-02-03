@@ -24,14 +24,16 @@ function! shrinkmap#canvas#braille_width() "{{{
 endfunction " }}}
 
 
-function! shrinkmap#canvas#allocate(canvas, y, x, width) "{{{
-  let l:y_char = a:y / s:braille_height
-  let l:x_char = min([a:x, a:width])
+function! shrinkmap#canvas#allocate(canvas, y_dot, x_dot) "{{{
+  let l:y_char = a:y_dot / s:braille_height
+  let l:x_char = a:x_dot / s:braille_width
 
   if g:shrinkmap_debug >= 2
     call shrinkmap#debug(2,
-    \ 'shrinkmap#canvas#allocate_line()' .
-    \ ': y_char = ' . l:y_char           .
+    \ 'shrinkmap#canvas#allocate()' .
+    \ ': y_dot = '  . a:y_dot       .
+    \ ', x_dot = '  . a:x_dot       .
+    \ ': y_char = ' . l:y_char      .
     \ ', x_char = ' . l:x_char
     \)
   endif
@@ -53,27 +55,27 @@ function! shrinkmap#canvas#allocate(canvas, y, x, width) "{{{
 
 endfunction "}}}
 
-function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
-  let l:y_char     = a:y / s:braille_height
-  let l:y_mod      = a:y % s:braille_height
-  let l:x_dot1     = min([a:x1, a:width * s:braille_width])
-  let l:x_dot2     = min([a:x2, a:width * s:braille_width])
+function! shrinkmap#canvas#draw_line(canvas, y_dot, x_dot_start, x_dot_end) "{{{
+  let l:y_char     = a:y_dot / s:braille_height
+  let l:y_mod      = a:y_dot % s:braille_height
   let l:canvas_row = a:canvas[l:y_char]
 
   if g:shrinkmap_debug >= 2
     call shrinkmap#debug(2,
-    \ 'shrinkmap#canvas#draw_line()'      .
-    \ ': y_canvas = ' . len(a:canvas)     .
-    \ ', x_canvas = ' . len(l:canvas_row) .
-    \ ', x_dot1 = '   . l:x_dot1          .
-    \ ', x_dot2 = '   . l:x_dot2
+    \ 'shrinkmap#canvas#draw_line()'         .
+    \ ': y_canvas = '    . len(a:canvas)     .
+    \ ', x_canvas = '    . len(l:canvas_row) .
+    \ ', x_dot_start = ' . a:x_dot_start     .
+    \ ', x_dot_end = '   . a:x_dot_end
     \)
   endif
 
-  let l:x_dot = l:x_dot1
-  while l:x_dot <= l:x_dot2
+  let l:x_dot = a:x_dot_start
+  while l:x_dot <= a:x_dot_end
     let l:x_char = l:x_dot / s:braille_width
     let l:x_mod  = l:x_dot % s:braille_width
+
+    let l:canvas_row[l:x_char] += s:braille_pixel_map[l:y_mod][l:x_mod]
 
     if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
@@ -82,11 +84,10 @@ function! shrinkmap#canvas#draw_line(canvas, y, x1, x2, width) "{{{
       \ ', y_char = ' . l:y_char       .
       \ ', x_char = ' . l:x_char       .
       \ ', y_mod = '  . l:y_mod        .
-      \ ', x_mod = '  . l:x_mod
+      \ ', x_mod = '  . l:x_mod        .
+      \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
       \)
     endif
-
-    let l:canvas_row[l:x_char] += s:braille_pixel_map[l:y_mod][l:x_mod]
 
     let l:x_dot += 1
   endwhile
@@ -104,7 +105,7 @@ function! shrinkmap#canvas#get_frame(canvas, fixed_width) "{{{
     endfor
 
     let l:i = len(l:canvas_row)
-    let l:n = a:fixed_width
+    let l:n = a:fixed_width - 1
     while l:i <= l:n
       let l:line .= ' '
       let l:i += 1
