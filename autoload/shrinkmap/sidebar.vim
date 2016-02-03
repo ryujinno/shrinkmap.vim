@@ -1,4 +1,4 @@
-let s:sidebar_align    = g:shrinkmap_sidebar_align
+let s:sidebar_align = g:shrinkmap_sidebar_align
 
 function! shrinkmap#sidebar#toggle() "{{{
   if bufwinnr(shrinkmap#buf_name_pattern()) < 0
@@ -34,9 +34,9 @@ function! shrinkmap#sidebar#open() "{{{
     let l:adjust = 1
   else
     shrinkmap#debug(0,
-    \ 'shrinkmap#sidebar#open(): '             .
-    \ 'g:shrinkmap_sidebar_align is invalid: ' .
-    \ g:shrinkmap_sidebar_align
+      \ 'shrinkmap#sidebar#open(): '             .
+      \ 'g:shrinkmap_sidebar_align is invalid: ' .
+      \ g:shrinkmap_sidebar_align
     \)
     return
   endif
@@ -102,9 +102,9 @@ function! shrinkmap#sidebar#close() "{{{
     let l:adjust = -1
   else
     shrinkmap#debug(0,
-    \ 'shrinkmap#sidebar#close(): ' .
-    \ 'Unknown sidebar align: '     .
-    \ s:sidebar_align
+      \ 'shrinkmap#sidebar#close(): ' .
+      \ 'Unknown sidebar align: '     .
+      \ s:sidebar_align
     \)
     return
   endif

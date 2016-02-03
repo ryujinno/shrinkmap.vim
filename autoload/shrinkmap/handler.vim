@@ -134,11 +134,11 @@ function! s:too_hot(double) "{{{
   end
 
   call shrinkmap#debug(1,
-  \ 'shrinkmap#handler.too_hot()'            .
-  \ ': double = '         . a:double         .
-  \ ', text_processed = ' . s:text_processed .
-  \ ', lazy_count = '     . s:lazy_count     .
-  \ ', too_hot = '        . l:too_hot
+    \ 'shrinkmap#handler.too_hot()'            .
+    \ ': double = '         . a:double         .
+    \ ', text_processed = ' . s:text_processed .
+    \ ', lazy_count = '     . s:lazy_count     .
+    \ ', too_hot = '        . l:too_hot
   \)
 
   return l:too_hot

@@ -129,13 +129,13 @@ function! s:draw_canvas(canvas, src_top, src_bottom, view_width) "{{{
 
     if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
-      \ 'shrinkmap#viewport.draw_canvas()' .
-      \ ': y_dot = '       . l:y_dot       .
-      \ ', indent_len = '  . l:indent_len  .
-      \ ', line_len = '    . l:line_len    .
-      \ ', x_max_dot = '   . l:x_max_dot   .
-      \ ', x_dot_start = ' . l:x_dot_start .
-      \ ', x_dot_end = '   . l:x_dot_end
+        \ 'shrinkmap#viewport.draw_canvas()' .
+        \ ': y_dot = '       . l:y_dot       .
+        \ ', indent_len = '  . l:indent_len  .
+        \ ', line_len = '    . l:line_len    .
+        \ ', x_max_dot = '   . l:x_max_dot   .
+        \ ', x_dot_start = ' . l:x_dot_start .
+        \ ', x_dot_end = '   . l:x_dot_end
       \)
     endif
 
@@ -186,10 +186,10 @@ function! shrinkmap#viewport#jump(mouse_line) "{{{
     let l:new_src_top = b:src_top + l:src_shift
 
     call shrinkmap#debug(1,
-    \ 'shrinkmap#viewport#jump()' .
-    \ ': mouse_line = '  . a:mouse_line .
-    \ ', src_shift = '   . l:src_shift .
-    \ ', new_src_top = ' . l:new_src_top
+      \ 'shrinkmap#viewport#jump()' .
+      \ ': mouse_line = '  . a:mouse_line .
+      \ ', src_shift = '   . l:src_shift .
+      \ ', new_src_top = ' . l:new_src_top
     \)
 
     " Move to previous window to jump

@@ -1,9 +1,9 @@
 let s:braille_zero = 0x2800
 let s:braille_pixel_map = [
-\  [ 0x01, 0x08 ],
-\  [ 0x02, 0x10 ],
-\  [ 0x04, 0x20 ],
-\  [ 0x40, 0x80 ],
+  \ [ 0x01, 0x08 ],
+  \ [ 0x02, 0x10 ],
+  \ [ 0x04, 0x20 ],
+  \ [ 0x40, 0x80 ],
 \]
 let s:braille_height = len(s:braille_pixel_map)
 let s:braille_width  = len(s:braille_pixel_map[0])
@@ -30,11 +30,11 @@ function! shrinkmap#canvas#allocate(canvas, y_dot, x_dot) "{{{
 
   if g:shrinkmap_debug >= 2
     call shrinkmap#debug(2,
-    \ 'shrinkmap#canvas#allocate()' .
-    \ ': y_dot = '  . a:y_dot       .
-    \ ', x_dot = '  . a:x_dot       .
-    \ ': y_char = ' . l:y_char      .
-    \ ', x_char = ' . l:x_char
+      \ 'shrinkmap#canvas#allocate()' .
+      \ ': y_dot = '  . a:y_dot       .
+      \ ', x_dot = '  . a:x_dot       .
+      \ ': y_char = ' . l:y_char      .
+      \ ', x_char = ' . l:x_char
     \)
   endif
 
@@ -62,11 +62,11 @@ function! shrinkmap#canvas#draw_line(canvas, y_dot, x_dot_start, x_dot_end) "{{{
 
   if g:shrinkmap_debug >= 2
     call shrinkmap#debug(2,
-    \ 'shrinkmap#canvas#draw_line()'         .
-    \ ': y_canvas = '    . len(a:canvas)     .
-    \ ', x_canvas = '    . len(l:canvas_row) .
-    \ ', x_dot_start = ' . a:x_dot_start     .
-    \ ', x_dot_end = '   . a:x_dot_end
+      \ 'shrinkmap#canvas#draw_line()'         .
+      \ ': y_canvas = '    . len(a:canvas)     .
+      \ ', x_canvas = '    . len(l:canvas_row) .
+      \ ', x_dot_start = ' . a:x_dot_start     .
+      \ ', x_dot_end = '   . a:x_dot_end
     \)
   endif
 
@@ -79,13 +79,13 @@ function! shrinkmap#canvas#draw_line(canvas, y_dot, x_dot_start, x_dot_end) "{{{
 
     if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
-      \ 'shrinkmap#canvas#draw_line()' .
-      \ ': x_dot = '  . l:x_dot        .
-      \ ', y_char = ' . l:y_char       .
-      \ ', x_char = ' . l:x_char       .
-      \ ', y_mod = '  . l:y_mod        .
-      \ ', x_mod = '  . l:x_mod        .
-      \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
+        \ 'shrinkmap#canvas#draw_line()' .
+        \ ': x_dot = '  . l:x_dot        .
+        \ ', y_char = ' . l:y_char       .
+        \ ', x_char = ' . l:x_char       .
+        \ ', y_mod = '  . l:y_mod        .
+        \ ', x_mod = '  . l:x_mod        .
+        \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
       \)
     endif
 
