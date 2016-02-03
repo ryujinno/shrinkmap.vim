@@ -20,9 +20,10 @@ function! shrinkmap#viewport#update(force) "{{{
   let l:bottom         = line('$')
 
   " Get source lines
-  let l:src_center  = (line('w0') + line('w$')) / 2
-  let l:src_top     = l:src_center - l:view_height / 2 * l:braille_height
-  let l:src_bottom  = l:src_center + l:view_height / 2 * l:braille_height
+  let l:src_center             = (line('w0') + line('w$')) / 2
+  let l:src_lines_of_half_view = l:view_height * l:braille_height / 2
+  let l:src_top                = l:src_center - l:src_lines_of_half_view
+  let l:src_bottom             = l:src_center + l:src_lines_of_half_view
   if l:src_top < 1
     let l:src_top    = 1
     let l:src_bottom = min([l:view_height * l:braille_height, l:bottom])
@@ -52,7 +53,7 @@ function! shrinkmap#viewport#update(force) "{{{
   let b:src_top    = l:src_top
   let b:src_bottom = l:src_bottom
 
-  let l:is_scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
+  let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
 
   call shrinkmap#debug(1,
       \ 'shrinkmap#viewport#update()'          .
@@ -63,7 +64,7 @@ function! shrinkmap#viewport#update(force) "{{{
       \ ', src_bottom = '    . l:src_bottom    .
       \ ', hilite_top = '    . l:hilite_top    .
       \ ', hilite_bottom = ' . l:hilite_bottom .
-      \ ', is_scrolled = '   . l:is_scrolled
+      \ ', scrolled = '      . l:scrolled
   \)
 
   " Resume to current window
@@ -72,7 +73,7 @@ function! shrinkmap#viewport#update(force) "{{{
   " Init canvas
   let l:canvas = shrinkmap#canvas#init()
 
-  if a:force || l:is_scrolled
+  if a:force || l:scrolled
     call s:draw_canvas(l:canvas, src_top, src_bottom, l:view_width)
   endif
 
@@ -80,7 +81,7 @@ function! shrinkmap#viewport#update(force) "{{{
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  if a:force || l:is_scrolled
+  if a:force || l:scrolled
     " Start modify
     setlocal modifiable
 
