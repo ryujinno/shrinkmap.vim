@@ -52,6 +52,7 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
+  " TOOD: FIXME: Mouse dragging bug
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved()')
 
   if bufname('%') !=# shrinkmap#buf_name()
@@ -61,9 +62,16 @@ function! s:on_cursor_moved() "{{{
       call shrinkmap#viewport#update(0)
     endif
   else
-    let l:mouse      = getchar()
+    let l:char       = getchar()
     let l:mouse_win  = v:mouse_win
     let l:mouse_lnum = v:mouse_lnum
+
+    call shrinkmap#debug(1,
+      \ 'shrinkmap#handler.on_cursor_moved()' .
+      \ ': char = '       . l:char            .
+      \ ', mouse_win = '  . l:mouse_win       .
+      \ ', mouse_lnum = ' . l:mouse_lnum
+    \)
 
     if l:mouse_win == 0
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Got focus of shrinkmap window')
@@ -103,16 +111,16 @@ endfunction "}}}
 
 
 function! s:init_lazy() "{{{
-  let s:reltime        = 0
-  let s:lazy_count     = 0
-  let s:text_processed = 0
+  let s:reltime    = 0
+  let s:lazy_count = 0
+  let s:in_double  = 0
 endfunction " }}}
 
 
 function! s:too_hot(double) "{{{
-  if s:text_processed
-    let s:text_processed = 0
-    let l:too_hot        = 1
+  if s:in_double
+    let s:in_double = 0
+    let l:too_hot   = 1
   else
     let l:reltime = str2float(reltimestr(reltime()))
 
@@ -128,17 +136,17 @@ function! s:too_hot(double) "{{{
   endif
 
   if a:double
-    let s:text_processed = 1
+    let s:in_double = 1
   else
-    let s:text_processed = 0
+    let s:in_double = 0
   end
 
   call shrinkmap#debug(1,
-    \ 'shrinkmap#handler.too_hot()'            .
-    \ ': double = '         . a:double         .
-    \ ', text_processed = ' . s:text_processed .
-    \ ', lazy_count = '     . s:lazy_count     .
-    \ ', too_hot = '        . l:too_hot
+    \ 'shrinkmap#handler.too_hot()'    .
+    \ ': double = '     . a:double     .
+    \ ', in_double = '  . s:in_double  .
+    \ ', lazy_count = ' . s:lazy_count .
+    \ ', too_hot = '    . l:too_hot
   \)
 
   return l:too_hot

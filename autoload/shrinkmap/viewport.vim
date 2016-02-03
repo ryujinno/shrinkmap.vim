@@ -155,7 +155,7 @@ function! s:resume_context(context) "{{{
   execute a:context.cur_win 'wincmd w'
 
   " Resume visual mode
-  if a:context.mode ==# 'v' || a:context.mode ==# 'V' || a:context.mode ==# "\026"
+  if a:context.mode ==# 'v' || a:context.mode ==# 'V' || a:context.mode ==# "\<C-v>"
     normal! gv
   endif
 endfunction "}}}
