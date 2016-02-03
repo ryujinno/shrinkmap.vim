@@ -205,7 +205,7 @@ function! shrinkmap#viewport#scroll(mouse_line) "{{{
     execute l:prev_win 'wincmd w'
 
     " Jump to mouse clicked
-    execute 'normal! ' . l:new_src_top . 'gg'
+    execute 'normal! ' . l:new_src_top . 'gg0'
   endif
 endfunction " }}}
 
