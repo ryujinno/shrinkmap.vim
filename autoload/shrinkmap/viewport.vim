@@ -34,45 +34,36 @@ function! shrinkmap#viewport#update(force) "{{{
     let l:src_bottom = l:bottom
   endif
 
+  " Previous source lines
+  let l:sm_buf          = bufnr(shrinkmap#buf_name_pattern())
+  let l:prev_src_top    = getbufvar(l:sm_buf, 'src_top')
+  let l:prev_src_bottom = getbufvar(l:sm_buf, 'src_bottom')
+  call setbufvar(l:sm_buf, 'src_top',    l:src_top)
+  call setbufvar(l:sm_buf, 'src_bottom', l:src_bottom)
+
+  " Scrolled or not
+  let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
+
   " Get highlight lines
   let l:hilite_top     = max([(l:display_top    - l:src_top + 1) / l:braille_height, 1])
   let l:hilite_bottom  = min([(l:display_bottom - l:src_top + 1) / l:braille_height, l:view_height])
 
-  " Move to shrinkmap window and buffer
-  execute l:sm_win 'wincmd w'
-  execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
-
-  " Get previous buffer variables
-  if exists('b:src_top')
-    let l:prev_src_top    = b:src_top
-    let l:prev_src_bottom = b:src_bottom
-  else
-    let l:prev_src_top    = -1
-    let l:prev_src_bottom = -1
-  endif
-
-  " Set buffer variables
-  let b:src_top    = l:src_top
-  let b:src_bottom = l:src_bottom
-
-  let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
 
   call shrinkmap#debug(1,
-      \ 'shrinkmap#viewport#update()'           .
-      \ ': force = '         . a:force          .
-      \ ', view_width = '    . l:view_width     .
-      \ ', view_height = '   . l:view_height    .
-      \ ', display_top = '   . l:display_top    .
-      \ ', display_bottom = '. l:display_bottom .
-      \ ', src_top = '       . l:src_top        .
-      \ ', src_bottom = '    . l:src_bottom     .
-      \ ', hilite_top = '    . l:hilite_top     .
-      \ ', hilite_bottom = ' . l:hilite_bottom  .
-      \ ', scrolled = '      . l:scrolled
+    \ 'shrinkmap#viewport#update()'              .
+    \ ': force = '           . a:force           .
+    \ ', view_width = '      . l:view_width      .
+    \ ', view_height = '     . l:view_height     .
+    \ ', display_top = '     . l:display_top     .
+    \ ', display_bottom = '  . l:display_bottom  .
+    \ ', src_top = '         . l:src_top         .
+    \ ', src_bottom = '      . l:src_bottom      .
+    \ ', prev_src_top = '    . l:prev_src_top    .
+    \ ', prev_src_bottom = ' . l:prev_src_bottom .
+    \ ', scrolled = '        . l:scrolled        .
+    \ ', hilite_top = '      . l:hilite_top      .
+    \ ', hilite_bottom = '   . l:hilite_bottom
   \)
-
-  " Resume to current window
-  execute l:context.cur_win 'wincmd w'
 
   " Init canvas
   let l:canvas = shrinkmap#canvas#init()
