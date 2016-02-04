@@ -119,8 +119,7 @@ endfunction " }}}
 
 function! s:too_hot(double) "{{{
   if s:in_double
-    let s:in_double = 0
-    let l:too_hot   = 1
+    let l:too_hot = 1
   else
     let l:reltime = str2float(reltimestr(reltime()))
 
@@ -135,16 +134,11 @@ function! s:too_hot(double) "{{{
     let s:reltime = l:reltime
   endif
 
-  if a:double
-    let s:in_double = 1
-  else
-    let s:in_double = 0
-  end
+  let s:in_double = a:double
 
   call shrinkmap#debug(1,
     \ 'shrinkmap#handler.too_hot()'    .
     \ ': double = '     . a:double     .
-    \ ', in_double = '  . s:in_double  .
     \ ', lazy_count = ' . s:lazy_count .
     \ ', too_hot = '    . l:too_hot
   \)
