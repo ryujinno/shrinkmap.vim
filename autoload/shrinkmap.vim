@@ -18,7 +18,7 @@ endfunction "}}}
 
 function! shrinkmap#debug(level, msg) "{{{
   if g:shrinkmap_debug >= a:level
-    echom a:msg
+    echomsg a:msg
   endif
 endfunction "}}}
 
