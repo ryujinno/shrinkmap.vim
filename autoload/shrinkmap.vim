@@ -1,3 +1,7 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 let s:buf_name         = '[shrinkmap]'
 let s:buf_name_pattern = '\[shrinkmap\]'
 
@@ -31,3 +35,8 @@ function! shrinkmap#current_buffer_is_target() "{{{
     return 1
   endif
 endfunction "}}}
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
+

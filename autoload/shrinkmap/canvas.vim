@@ -1,3 +1,7 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 let s:braille_zero = 0x2800
 let s:braille_pixel_map = [
   \ [ 0x01, 0x08 ],
@@ -127,4 +131,8 @@ function! shrinkmap#canvas#get_string(canvas_row) "{{{
 
   return l:line
 endfunction "}}}
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 

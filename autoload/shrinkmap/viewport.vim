@@ -1,3 +1,7 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 function! shrinkmap#viewport#update(force) "{{{
   " Check current buffer
   if !shrinkmap#current_buffer_is_target()
@@ -188,4 +192,8 @@ function! shrinkmap#viewport#jump(mouse_line) "{{{
     execute 'normal! ' . l:new_src_top . 'gg0'
   endif
 endfunction " }}}
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 

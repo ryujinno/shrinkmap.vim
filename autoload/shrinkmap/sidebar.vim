@@ -1,3 +1,7 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 let s:sidebar_align = g:shrinkmap_sidebar_align
 
 function! shrinkmap#sidebar#toggle() "{{{
@@ -115,4 +119,8 @@ function! shrinkmap#sidebar#close() "{{{
     execute l:cur_win 'wincmd w'
   endif
 endfunction "}}}
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 

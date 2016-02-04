@@ -1,3 +1,7 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 function! shrinkmap#handler#reset(set) "{{{
   augroup shrinkmap_group
     autocmd!
@@ -145,4 +149,8 @@ function! s:too_hot(double) "{{{
 
   return l:too_hot
 endfunction " }}}
+
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
