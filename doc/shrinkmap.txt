@@ -44,7 +44,7 @@ CONTENTS                                                  *shrinkmap-contents*
 *g:shrinkmap_sidebar_width*
         Sidebar window width, which is max number of Braille characters
         in a line. A Braille character has 2 dots in a width.
-        Sidebar window applies for this value when open.
+        Sidebar window applies for this value when open and update.
 >
   let g:shrinkmap_sidebar_width = 25 "Braille characters
 <

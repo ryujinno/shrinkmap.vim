@@ -17,6 +17,11 @@ function! shrinkmap#viewport#update(force) "{{{
   " Get context
   let l:context = s:get_context()
 
+  " Resize shirnkmap sidebar
+  execute l:sm_win 'wincmd w'
+  execute 'vertical resize' g:shrinkmap_sidebar_width
+  call s:resume_context(l:context)
+
   " Prepare for viewport
   let l:braille_height = shrinkmap#canvas#braille_height()
   let l:view_width     = winwidth(l:sm_win)
