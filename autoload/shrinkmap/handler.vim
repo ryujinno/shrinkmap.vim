@@ -6,7 +6,7 @@ function! shrinkmap#handler#reset(set) "{{{
   augroup shrinkmap_group
     autocmd!
     if a:set
-      autocmd WinEnter <buffer>          call s:on_win_enter()
+      autocmd WinEnter                 * call s:on_win_enter()
       autocmd BufWinEnter              * call s:on_buf_win_enter()
       autocmd TextChanged,TextChangedI * call s:on_text_changed()
       autocmd CursorMoved              * call s:on_cursor_moved()
@@ -24,16 +24,22 @@ endfunction "}}}
 function! s:on_win_enter() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_win_enter()')
 
-  " Check window count
-  if winnr('$') == 1
-    quit
+  if shrinkmap#current_buffer_is_target()
+    call s:resize_window()
+  else
+    " Check window count
+    if winnr('$') == 1
+      quit
+    endif
   endif
+
 endfunction "}}}
 
 
 function! s:on_buf_win_enter() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_buf_win_enter()')
 
+  call s:resize_window()
   call shrinkmap#viewport#update(1)
 endfunction "}}}
 
@@ -99,6 +105,13 @@ function! s:on_cursor_moved_on_insert() "{{{
   endif
 endfunction "}}}
 
+function! s:resize_window() "{{{
+  let l:cur_win = bufwinnr('%')
+  let l:sm_win = bufwinnr(shrinkmap#buf_name_pattern())
+  execute l:sm_win 'wincmd w'
+  execute 'vertical resize' g:shrinkmap_sidebar_width
+  execute l:cur_win 'wincmd w'
+endfunction "}}}
 
 function! s:on_resized() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_resized()')

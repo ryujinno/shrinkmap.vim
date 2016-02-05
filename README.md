@@ -56,7 +56,7 @@ let g:shrinkmap_sidebar_align = 'right'
   <dd>
       Sidebar window width, which is max number of Braille characters in a line.
       A Braille character has 2 dots in a width.
-      Sidebar window applies for this value when open and update.
+      Sidebar window applies for this value when open.
   </dd>
 </dl>
 

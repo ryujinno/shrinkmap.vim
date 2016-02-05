@@ -17,11 +17,6 @@ function! shrinkmap#viewport#update(force) "{{{
   " Get context
   let l:context = s:get_context()
 
-  " Resize shirnkmap sidebar
-  execute l:sm_win 'wincmd w'
-  execute 'vertical resize' g:shrinkmap_sidebar_width
-  call s:resume_context(l:context)
-
   " Prepare for viewport
   let l:braille_height = shrinkmap#canvas#braille_height()
   let l:view_width     = winwidth(l:sm_win)
@@ -56,6 +51,8 @@ function! shrinkmap#viewport#update(force) "{{{
 
   " Scrolled or not
   let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
+
+  " Resized or not
   let l:resized  = (l:view_height != l:prev_view_height || l:view_width != l:prev_view_width)
 
   " Get highlight lines
