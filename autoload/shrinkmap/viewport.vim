@@ -44,14 +44,19 @@ function! shrinkmap#viewport#update(force) "{{{
   endif
 
   " Previous source lines
-  let l:sm_buf          = bufnr(shrinkmap#buf_name_pattern())
-  let l:prev_src_top    = getbufvar(l:sm_buf, 'src_top')
-  let l:prev_src_bottom = getbufvar(l:sm_buf, 'src_bottom')
-  call setbufvar(l:sm_buf, 'src_top',    l:src_top)
-  call setbufvar(l:sm_buf, 'src_bottom', l:src_bottom)
+  let l:sm_buf           = bufnr(shrinkmap#buf_name_pattern())
+  let l:prev_src_top     = getbufvar(l:sm_buf, 'src_top')
+  let l:prev_src_bottom  = getbufvar(l:sm_buf, 'src_bottom')
+  let l:prev_view_height = getbufvar(l:sm_buf, 'view_height')
+  let l:prev_view_width  = getbufvar(l:sm_buf, 'view_width')
+  call setbufvar(l:sm_buf, 'src_top',     l:src_top)
+  call setbufvar(l:sm_buf, 'src_bottom',  l:src_bottom)
+  call setbufvar(l:sm_buf, 'view_height', l:view_height)
+  call setbufvar(l:sm_buf, 'view_width',  l:view_width)
 
   " Scrolled or not
   let l:scrolled = (l:src_top != l:prev_src_top || l:src_bottom != l:prev_src_bottom)
+  let l:resized  = (l:view_height != l:prev_view_height || l:view_width != l:prev_view_width)
 
   " Get highlight lines
   let l:hilite_top     = max([(l:display_top    - l:src_top + 1) / l:braille_height, 1])
@@ -77,7 +82,7 @@ function! shrinkmap#viewport#update(force) "{{{
   " Init canvas
   let l:canvas = shrinkmap#canvas#init()
 
-  if a:force || l:scrolled
+  if a:force || l:scrolled || l:resized
     call s:draw_canvas(l:canvas, src_top, src_bottom, l:view_width)
   endif
 
@@ -85,7 +90,7 @@ function! shrinkmap#viewport#update(force) "{{{
   execute l:sm_win 'wincmd w'
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
-  if a:force || l:scrolled
+  if a:force || l:scrolled || l:resized
     " Start modify
     setlocal modifiable
 
