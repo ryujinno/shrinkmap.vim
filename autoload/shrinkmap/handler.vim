@@ -56,7 +56,7 @@ endfunction "}}}
 
 
 function! s:on_cursor_moved() "{{{
-  " TOOD: FIXME: Mouse dragging bug
+  " TODO: FIXME: Mouse dragging bug
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved()')
 
   if bufname('%') !=# shrinkmap#buf_name()
@@ -66,25 +66,24 @@ function! s:on_cursor_moved() "{{{
       call shrinkmap#viewport#update(0)
     endif
   else
-    let l:char       = getchar()
-    let l:mouse_win  = v:mouse_win
-    let l:mouse_lnum = v:mouse_lnum
-
+    let l:pos = getpos('.')
+    let l:line = l:pos[1]
+    let l:col  = l:pos[2]
     call shrinkmap#debug(1,
       \ 'shrinkmap#handler.on_cursor_moved()' .
-      \ ': char = '       . l:char            .
-      \ ', mouse_win = '  . l:mouse_win       .
-      \ ', mouse_lnum = ' . l:mouse_lnum
+      \ ': bufnum = ' . l:pos[0] .
+      \ ', line = '   . l:line   .
+      \ ', col = '    . l:col    .
+      \ ', off = '    . l:pos[3]
     \)
-
-    if l:mouse_win == 0
+    if l:line == 1 && l:col == 1
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Got focus of shrinkmap window')
 
       " Move to previous window to drop focus
       wincmd p
     else
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Mouse clicked in shrinkmap window')
-      call shrinkmap#viewport#jump(l:mouse_lnum)
+      call shrinkmap#viewport#jump(l:line)
       call shrinkmap#viewport#update(1)
     endif
   endif
