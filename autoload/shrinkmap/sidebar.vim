@@ -73,7 +73,7 @@ function! s:set_buffer() "{{{
   setlocal nonumber norelativenumber nolist nowrap
 
   " Read only
-  setlocal nomodifiable
+  setlocal readonly nomodifiable
 
   " Window
   setlocal winfixwidth

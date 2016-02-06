@@ -93,8 +93,8 @@ function! shrinkmap#viewport#update(force) "{{{
   execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
 
   if a:force || l:scrolled || l:resized
-    " Start modify
-    setlocal modifiable
+    " Start edit
+    setlocal noreadonly modifiable
 
     " Delete shrinkmap buffer
     silent %delete _
@@ -102,8 +102,8 @@ function! shrinkmap#viewport#update(force) "{{{
     " Put canvas to shrinkmap buffer
     call append(0, shrinkmap#canvas#get_frame(l:canvas, l:view_width))
 
-    " End modify
-    setlocal nomodifiable
+    " End edit
+    setlocal readonly nomodifiable
   endif
 
   " Highlight
