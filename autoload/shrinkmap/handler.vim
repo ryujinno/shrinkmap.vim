@@ -76,6 +76,7 @@ function! s:on_cursor_moved() "{{{
       \ ', col = '    . l:col    .
       \ ', off = '    . l:pos[3]
     \)
+
     if l:line == 1 && l:col == 1
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Got focus of shrinkmap window')
 
