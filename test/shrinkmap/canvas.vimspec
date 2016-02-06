@@ -1,0 +1,94 @@
+let s:assert = themis#helper('assert')
+call themis#helper('command').with(s:assert)
+
+describe shrinkmap#canvas
+  describe #init()
+    before each
+      let l:canvas = shrinkmap#canvas#init()
+    end
+
+    it should return empty list
+      Assert Equals(l:canvas, [])
+    end
+  end
+
+  describe #allocate()
+    before each
+      let l:canvas = shrinkmap#canvas#init()
+    end
+
+    it should allocate minimum
+      let l:expected = [ [ 0x2800 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 0, 0)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should allocate X
+      let l:expected = [ [ 0x2800, 0x2800 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 0, 2)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should allocate Y
+      let l:expected = [
+        \ [],
+        \ [ 0x2800 ],
+      \]
+      call shrinkmap#canvas#allocate(l:canvas, 4, 0)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should allocate XY
+      let l:expected = [
+        \ [],
+        \ [ 0x2800, 0x2800 ],
+      \]
+      call shrinkmap#canvas#allocate(l:canvas, 4, 2)
+      Assert Equals(l:canvas, l:expected)
+    end
+  end
+
+  describe #draw_line()
+    before all
+      let l:canvas = shrinkmap#canvas#init()
+    end
+
+    it should draw 1 dot in line 0
+      let expected = [ [ 0x2801 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 0, 0)
+      call shrinkmap#canvas#draw_line(l:canvas, 0, 0, 0)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should draw 2 dots in line 1
+      let expected = [ [ 0x2811, 0x2802 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 1, 2)
+      call shrinkmap#canvas#draw_line(l:canvas, 1, 1, 2)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should draw 3 dots in line 2
+      let expected = [ [ 0x2811, 0x2826, 0x2804 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 2, 4)
+      call shrinkmap#canvas#draw_line(l:canvas, 2, 2, 4)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should draw 4 dots in line 3
+      let expected = [ [ 0x2811, 0x28a6, 0x28c4, 0x2840 ] ]
+      call shrinkmap#canvas#allocate(l:canvas, 3, 6)
+      call shrinkmap#canvas#draw_line(l:canvas, 3, 3, 6)
+      Assert Equals(l:canvas, l:expected)
+    end
+
+    it should draw 5 dots in line 4
+      let expected = [
+        \ [ 0x2811, 0x28a6, 0x28c4, 0x2840 ],
+        \ [ 0x2800, 0x2800, 0x2809, 0x2809 ],
+      \]
+      call shrinkmap#canvas#allocate(l:canvas, 4, 7)
+      call shrinkmap#canvas#draw_line(l:canvas, 4, 4, 7)
+      Assert Equals(l:canvas, l:expected)
+    end
+  end
+end
