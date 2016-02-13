@@ -3,14 +3,20 @@ set cpo&vim
 
 
 let s:braille_zero = 0x2800
-let s:braille_pixel_map = [
+let s:braille_pixel_map_single = [
   \ [ 0x01, 0x08 ],
   \ [ 0x02, 0x10 ],
   \ [ 0x04, 0x20 ],
   \ [ 0x40, 0x80 ],
 \]
-let s:braille_height = len(s:braille_pixel_map)
-let s:braille_width  = len(s:braille_pixel_map[0])
+let s:braille_pixel_map_double = [
+  \ 0x09,
+  \ 0x12,
+  \ 0x24,
+  \ 0xc0,
+\]
+let s:braille_height = len(s:braille_pixel_map_single)
+let s:braille_width  = len(s:braille_pixel_map_single[0])
 
 
 function! shrinkmap#canvas#init() "{{{
@@ -74,27 +80,58 @@ function! shrinkmap#canvas#draw_line(canvas, y_dot, x_dot_start, x_dot_end) "{{{
     \)
   endif
 
-  let l:x_dot = a:x_dot_start
-  while l:x_dot <= a:x_dot_end
-    let l:x_char = l:x_dot / s:braille_width
-    let l:x_mod  = l:x_dot % s:braille_width
-
-    let l:canvas_row[l:x_char] += s:braille_pixel_map[l:y_mod][l:x_mod]
-
+  " Single at start
+  let l:x_mod  = a:x_dot_start % s:braille_width
+  let l:x_char = a:x_dot_start / s:braille_width
+  if l:x_mod == 1
+    let l:canvas_row[l:x_char] += s:braille_pixel_map_single[l:y_mod][l:x_mod]
     if g:shrinkmap_debug >= 2
       call shrinkmap#debug(2,
         \ 'shrinkmap#canvas#draw_line()' .
-        \ ': x_dot = '  . l:x_dot        .
-        \ ', y_char = ' . l:y_char       .
+        \ ': y_char = ' . l:y_char       .
         \ ', x_char = ' . l:x_char       .
         \ ', y_mod = '  . l:y_mod        .
         \ ', x_mod = '  . l:x_mod        .
         \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
       \)
     endif
+    let l:x_char += 1
+  end
 
-    let l:x_dot += 1
+  " Double in middle
+  let l:x_char_end = (a:x_dot_end + 1) / s:braille_width
+  while l:x_char < l:x_char_end
+    let l:canvas_row[l:x_char] += s:braille_pixel_map_double[l:y_mod]
+
+    if g:shrinkmap_debug >= 2
+      call shrinkmap#debug(2,
+        \ 'shrinkmap#canvas#draw_line()' .
+        \ ': y_char = ' . l:y_char       .
+        \ ', x_char = ' . l:x_char       .
+        \ ', y_mod = '  . l:y_mod        .
+        \ ', x_mod = 2' .
+        \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
+      \)
+    endif
+
+    let l:x_char += 1
   endwhile
+
+  " Single at end
+  let l:x_mod = a:x_dot_end % s:braille_width
+  if l:x_mod == 0
+    let l:canvas_row[l:x_char] += s:braille_pixel_map_single[l:y_mod][l:x_mod]
+    if g:shrinkmap_debug >= 2
+      call shrinkmap#debug(2,
+        \ 'shrinkmap#canvas#draw_line()' .
+        \ ': y_char = ' . l:y_char       .
+        \ ', x_char = ' . l:x_char       .
+        \ ', y_mod = '  . l:y_mod        .
+        \ ', x_mod = '  . l:x_mod        .
+        \ ', char = '   . printf('0x%04x', l:canvas_row[l:x_char])
+      \)
+    endif
+  end
 endfunction "}}}
 
 
@@ -108,12 +145,8 @@ function! shrinkmap#canvas#get_frame(canvas, fixed_width) "{{{
       let l:line .= nr2char(l:char_code, 1)
     endfor
 
-    let l:i = len(l:canvas_row)
-    let l:n = a:fixed_width - 1
-    while l:i <= l:n
-      let l:line .= ' '
-      let l:i += 1
-    endwhile
+    let l:pad = a:fixed_width - len(l:canvas_row)
+    let l:line .= printf('%' . l:pad . 's', '')
 
     call add(l:lines, l:line)
   endfor
