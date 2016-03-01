@@ -21,7 +21,7 @@ function! shrinkmap#sidebar#open() "{{{
 
   " Check current buffer
   if !shrinkmap#current_buffer_is_target()
-    shrinkmap#debug(0, 'Current buffer is not a target of ShrinkMap')
+    call shrinkmap#debug(0, 'Current buffer is not a target of ShrinkMap')
     return
   endif
 
