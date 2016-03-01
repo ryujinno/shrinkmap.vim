@@ -37,7 +37,7 @@ function! shrinkmap#sidebar#open() "{{{
     let l:align  = 'topleft'
     let l:adjust = 1
   else
-    shrinkmap#debug(0,
+    call shrinkmap#debug(0,
       \ 'shrinkmap#sidebar#open(): '             .
       \ 'g:shrinkmap_sidebar_align is invalid: ' .
       \ g:shrinkmap_sidebar_align
@@ -105,7 +105,7 @@ function! shrinkmap#sidebar#close() "{{{
   elseif s:sidebar_align ==# 'left'
     let l:adjust = -1
   else
-    shrinkmap#debug(0,
+    call shrinkmap#debug(0,
       \ 'shrinkmap#sidebar#close(): ' .
       \ 'Unknown sidebar align: '     .
       \ s:sidebar_align
