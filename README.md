@@ -1,5 +1,7 @@
 # ShrinkMap.vim
 
+[![Build Status](https://travis-ci.org/ryujinno/shrinkmap.vim.svg?branch=master)](https://travis-ci.org/ryujinno/shrinkmap.vim)
+
 ShrinkMap.vim is VIM plug-in to show the current buffer in the sidebar with shrinking.
 The screenshot is:
 
