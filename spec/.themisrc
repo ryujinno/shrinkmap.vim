@@ -1,0 +1,2 @@
+call themis#option('reporter', 'spec')
+call themis#option('recursive', 1)
