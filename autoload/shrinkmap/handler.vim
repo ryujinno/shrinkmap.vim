@@ -66,25 +66,25 @@ function! s:on_cursor_moved() "{{{
       call shrinkmap#viewport#update(0)
     endif
   else
-    let l:pos = getpos('.')
-    let l:line = l:pos[1]
-    let l:col  = l:pos[2]
+    let pos    = getpos('.')
+    let line   = pos[1]
+    let column = pos[2]
     call shrinkmap#debug(1,
       \ 'shrinkmap#handler.on_cursor_moved()' .
-      \ ': bufnum = ' . l:pos[0] .
-      \ ', line = '   . l:line   .
-      \ ', col = '    . l:col    .
-      \ ', off = '    . l:pos[3]
+      \ ': bufnum = ' . pos[0] .
+      \ ', line = '   . line   .
+      \ ', column = ' . column .
+      \ ', off = '    . pos[3]
     \)
 
-    if l:line == 1 && l:col == 1
+    if line == 1 && column == 1
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Got focus of shrinkmap window')
 
       " Move to previous window to drop focus
       wincmd p
     else
       call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Mouse clicked in shrinkmap window')
-      call shrinkmap#viewport#jump(l:line)
+      call shrinkmap#viewport#jump(line)
       call shrinkmap#viewport#update(1)
     endif
   endif
@@ -123,19 +123,19 @@ endfunction " }}}
 
 function! s:too_hot(double) "{{{
   if s:in_double
-    let l:too_hot = 1
+    let too_hot = 1
   else
-    let l:reltime = str2float(reltimestr(reltime()))
+    let reltime = str2float(reltimestr(reltime()))
 
-    if l:reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
-      let s:lazy_count  = 0
-      let l:too_hot     = 0
+    if reltime - s:reltime > g:shrinkmap_lazy_limit_time || s:lazy_count > g:shrinkmap_lazy_limit_count
+      let s:lazy_count = 0
+      let too_hot      = 0
     else
       let s:lazy_count += 1
-      let l:too_hot     = 1
+      let too_hot       = 1
     endif
 
-    let s:reltime = l:reltime
+    let s:reltime = reltime
   endif
 
   let s:in_double = a:double
@@ -144,10 +144,10 @@ function! s:too_hot(double) "{{{
     \ 'shrinkmap#handler.too_hot()'    .
     \ ': double = '     . a:double     .
     \ ', lazy_count = ' . s:lazy_count .
-    \ ', too_hot = '    . l:too_hot
+    \ ', too_hot = '    . too_hot
   \)
 
-  return l:too_hot
+  return too_hot
 endfunction " }}}
 
 

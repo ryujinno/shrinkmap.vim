@@ -26,16 +26,16 @@ function! shrinkmap#sidebar#open() "{{{
   endif
 
   " Get current window
-  let l:cur_win = winnr()
+  let cur_win = winnr()
 
   " Keep sidebar align
   let s:sidebar_align = g:shrinkmap_sidebar_align
   if s:sidebar_align ==# 'right'
-    let l:align  = 'botright'
-    let l:adjust = 0
+    let align  = 'botright'
+    let adjust = 0
   elseif s:sidebar_align ==# 'left'
-    let l:align  = 'topleft'
-    let l:adjust = 1
+    let align  = 'topleft'
+    let adjust = 1
   else
     call shrinkmap#debug(0,
       \ 'shrinkmap#sidebar#open(): '             .
@@ -46,10 +46,10 @@ function! shrinkmap#sidebar#open() "{{{
   endif
 
   " Open window
-  execute l:align g:shrinkmap_sidebar_width 'vnew' shrinkmap#buf_name()
+  execute align g:shrinkmap_sidebar_width 'vnew' shrinkmap#buf_name()
 
   " Adjust window number
-  let l:cur_win += l:adjust
+  let cur_win += adjust
 
   " Resize already open window
   execute 'vertical resize' g:shrinkmap_sidebar_width
@@ -58,7 +58,7 @@ function! shrinkmap#sidebar#open() "{{{
   call shrinkmap#handler#reset(1)
 
   " Resume window
-  execute l:cur_win 'wincmd w'
+  execute cur_win 'wincmd w'
 
   " Update shrinkmap
   call shrinkmap#viewport#update(1)
@@ -82,16 +82,16 @@ endfunction "}}}
 
 function! shrinkmap#sidebar#close() "{{{
   " Check shrinkmap window
-  let l:sm_win = bufwinnr(shrinkmap#buf_name_pattern())
-  if l:sm_win < 0
+  let sm_win = bufwinnr(shrinkmap#buf_name_pattern())
+  if sm_win < 0
     return
   endif
 
   " Get current and shrinkmap window
-  let l:cur_win = winnr()
+  let cur_win = winnr()
 
   " Move to shrinkmap window
-  execute l:sm_win 'wincmd w'
+  execute sm_win 'wincmd w'
 
   " Unset handler
   call shrinkmap#handler#reset(0)
@@ -101,9 +101,9 @@ function! shrinkmap#sidebar#close() "{{{
 
   " Adjust current window number
   if s:sidebar_align ==# 'right'
-    let l:adjust = 0
+    let adjust = 0
   elseif s:sidebar_align ==# 'left'
-    let l:adjust = -1
+    let adjust = -1
   else
     call shrinkmap#debug(0,
       \ 'shrinkmap#sidebar#close(): ' .
@@ -112,11 +112,11 @@ function! shrinkmap#sidebar#close() "{{{
     \)
     return
   endif
-  let l:cur_win += l:adjust
+  let cur_win += adjust
 
   " Resume window
-  if l:cur_win != l:sm_win
-    execute l:cur_win 'wincmd w'
+  if cur_win != sm_win
+    execute cur_win 'wincmd w'
   endif
 endfunction "}}}
 
