@@ -60,7 +60,7 @@ function! s:on_cursor_moved() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved()')
 
   if bufname('%') !=# shrinkmap#buf_name()
-    call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in the other buffer')
+    call shrinkmap#debug(1, 'shrinkmap#handler.on_cursor_moved(): Cursor moved in source buffer')
 
     if !s:too_hot(0)
       call shrinkmap#viewport#update(0)
