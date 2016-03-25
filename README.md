@@ -106,19 +106,6 @@ let g:shrinkmap_lazy_limit_time  = 0.25 "second
 ```
 
 
-<dl>
-  <dt>g:shrinkmap_lazy_limit_count</dt>
-  <dd>
-      Limit counts for lazy drawing.
-      Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
-  </dd>
-</dl>
-
-```VimL
-let g:shrinkmap_lazy_limit_count = 8 "times
-```
-
-
 ## Contributing
 
 1. Fork it ( https://github.com/ryujinno/shrinkmap.vim/fork )

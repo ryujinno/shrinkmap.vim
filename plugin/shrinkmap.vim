@@ -38,12 +38,6 @@ if !exists('g:shrinkmap_lazy_limit_time')
   let g:shrinkmap_lazy_limit_time  = 0.25 "second
 endif
 
-if !exists('g:shrinkmap_lazy_limit_count')
-  " Limit counts for lazy drawing.
-  " Suitable value is a integer multiplied by g:shrinkmap_horizontal_shrink.
-  let g:shrinkmap_lazy_limit_count = 8 "times
-endif
-
 if !exists('g:shrinkmap_debug')
   let g:shrinkmap_debug = 0
 endif
