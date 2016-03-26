@@ -5,7 +5,7 @@ set cpo&vim
 let s:sidebar_align = g:shrinkmap_sidebar_align
 
 function! shrinkmap#sidebar#toggle() "{{{
-  if bufwinnr(shrinkmap#buf_name_pattern()) < 0
+  if shrinkmap#win() < 0
     call shrinkmap#sidebar#open()
   else
     call shrinkmap#sidebar#close()
@@ -15,7 +15,7 @@ endfunction "}}}
 
 function! shrinkmap#sidebar#open() "{{{
   " Check shrinkmap window
-  if bufwinnr(shrinkmap#buf_name_pattern()) > 0
+  if shrinkmap#win() > 0
     return
   endif
 
@@ -82,42 +82,15 @@ endfunction "}}}
 
 function! shrinkmap#sidebar#close() "{{{
   " Check shrinkmap window
-  let sm_win = bufwinnr(shrinkmap#buf_name_pattern())
-  if sm_win < 0
+  if shrinkmap#win() < 0
     return
   endif
-
-  " Get current and shrinkmap window
-  let cur_win = winnr()
-
-  " Move to shrinkmap window
-  execute sm_win 'wincmd w'
 
   " Unset handler
   call shrinkmap#handler#reset(0)
 
   " Close shrinkmap window
-  bdelete
-
-  " Adjust current window number
-  if s:sidebar_align ==# 'right'
-    let adjust = 0
-  elseif s:sidebar_align ==# 'left'
-    let adjust = -1
-  else
-    call shrinkmap#debug(0,
-      \ 'shrinkmap#sidebar#close(): ' .
-      \ 'Unknown sidebar align: '     .
-      \ s:sidebar_align
-    \)
-    return
-  endif
-  let cur_win += adjust
-
-  " Resume window
-  if cur_win != sm_win
-    execute cur_win 'wincmd w'
-  endif
+  execute 'bdelete' shrinkmap#buf()
 endfunction "}}}
 
 

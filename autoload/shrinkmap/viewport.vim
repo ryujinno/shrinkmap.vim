@@ -9,7 +9,7 @@ function! shrinkmap#viewport#update(force) "{{{
   endif
 
   " Check shrinkmap window
-  let sm_win = bufwinnr(shrinkmap#buf_name_pattern())
+  let sm_win = shrinkmap#win()
   if sm_win < 0
     return
   endif
@@ -44,7 +44,7 @@ function! shrinkmap#viewport#update(force) "{{{
   endif
 
   " Get previous source lines
-  let sm_buf           = bufnr(shrinkmap#buf_name_pattern())
+  let sm_buf           = shrinkmap#buf()
   let prev_src_top     = getbufvar(sm_buf, 'src_top')
   let prev_src_bottom  = getbufvar(sm_buf, 'src_bottom')
   let prev_view_height = getbufvar(sm_buf, 'view_height')
@@ -95,7 +95,7 @@ function! shrinkmap#viewport#update(force) "{{{
 
   " Move to shrinkmap window and buffer
   execute sm_win 'wincmd w'
-  execute 'buffer ' bufnr(shrinkmap#buf_name_pattern())
+  execute 'buffer ' shrinkmap#buf()
 
   if a:force || scrolled || resized
     " Start edit
@@ -194,7 +194,7 @@ function! shrinkmap#viewport#jump(mouse_line) "{{{
     return
   endif
 
-  let src_top = getbufvar(shrinkmap#buf_name_pattern(), 'src_top')
+  let src_top = getbufvar(shrinkmap#buf(), 'src_top')
   if src_top !=# ''
     " Get new source top line
     let src_jump = (a:mouse_line - 1) * shrinkmap#canvas#braille_height()

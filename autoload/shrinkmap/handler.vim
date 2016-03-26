@@ -36,7 +36,7 @@ function! s:on_win_enter() "{{{
   end
 
   " Get previous source buffer
-  let sm_buf = bufnr(shrinkmap#buf_name_pattern())
+  let sm_buf = shrinkmap#buf()
   let prev_src_buf = getbufvar(sm_buf, 'src_buf')
 
   " Get next buffers

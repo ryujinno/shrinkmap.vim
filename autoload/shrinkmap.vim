@@ -11,8 +11,13 @@ function! shrinkmap#buf_name() "{{{
 endfunction "}}}
 
 
-function! shrinkmap#buf_name_pattern() "{{{
-  return s:buf_name_pattern
+function! shrinkmap#buf() "{{{
+  return bufnr(s:buf_name_pattern)
+endfunction "}}}
+
+
+function! shrinkmap#win() "{{{
+  return bufwinnr(s:buf_name_pattern)
 endfunction "}}}
 
 
@@ -30,10 +35,10 @@ endfunction "}}}
 
 
 function! shrinkmap#is_buffer_target(buf_name) "{{{
-  if a:buf_name ==# shrinkmap#buf_name() ||
-    \a:buf_name ==# '[Command Line]'     ||
-    \a:buf_name =~ '^vimfiler:'          ||
-    \a:buf_name =~ '^\[unite\]'          ||
+  if a:buf_name ==# s:buf_name       ||
+    \a:buf_name ==# '[Command Line]' ||
+    \a:buf_name =~ '^vimfiler:'      ||
+    \a:buf_name =~ '^\[unite\]'      ||
     \a:buf_name =~ '^NERD_tree'
     return 0
   else
