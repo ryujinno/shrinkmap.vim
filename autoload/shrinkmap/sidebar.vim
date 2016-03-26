@@ -51,9 +51,6 @@ function! shrinkmap#sidebar#open() "{{{
   " Adjust window number
   let cur_win += adjust
 
-  " Resize already open window
-  execute 'vertical resize' g:shrinkmap_sidebar_width
-
   call s:set_buffer()
   call shrinkmap#handler#reset(1)
 
