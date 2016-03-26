@@ -20,7 +20,7 @@ function! shrinkmap#sidebar#open() "{{{
   endif
 
   " Check current buffer
-  if !shrinkmap#current_buffer_is_target()
+  if !shrinkmap#is_current_buffer_target()
     call shrinkmap#debug(0, 'Current buffer is not a target of ShrinkMap')
     return
   endif
@@ -67,7 +67,7 @@ endfunction "}}}
 
 function! s:set_buffer() "{{{
   " Temporary buffer
-  setlocal buftype=nofile bufhidden=wipe noswapfile nobuflisted
+  setlocal buftype=nofile bufhidden=delete noswapfile nobuflisted
 
   " Simple viewport
   setlocal nonumber norelativenumber nolist nowrap
@@ -97,7 +97,7 @@ function! shrinkmap#sidebar#close() "{{{
   call shrinkmap#handler#reset(0)
 
   " Close shrinkmap window
-  close
+  bdelete
 
   " Adjust current window number
   if s:sidebar_align ==# 'right'

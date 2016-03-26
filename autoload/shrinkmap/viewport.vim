@@ -4,7 +4,7 @@ set cpo&vim
 
 function! shrinkmap#viewport#update(force) "{{{
   " Check current buffer
-  if !shrinkmap#current_buffer_is_target()
+  if !shrinkmap#is_current_buffer_target()
     return
   endif
 
@@ -43,16 +43,21 @@ function! shrinkmap#viewport#update(force) "{{{
     let src_bottom = bottom
   endif
 
-  " Previous source lines
+  " Get previous source lines
   let sm_buf           = bufnr(shrinkmap#buf_name_pattern())
   let prev_src_top     = getbufvar(sm_buf, 'src_top')
   let prev_src_bottom  = getbufvar(sm_buf, 'src_bottom')
   let prev_view_height = getbufvar(sm_buf, 'view_height')
   let prev_view_width  = getbufvar(sm_buf, 'view_width')
+
+  " Set new source lines
   call setbufvar(sm_buf, 'src_top',     src_top)
   call setbufvar(sm_buf, 'src_bottom',  src_bottom)
   call setbufvar(sm_buf, 'view_height', view_height)
   call setbufvar(sm_buf, 'view_width',  view_width)
+
+  " Set source buffer number
+  call setbufvar(sm_buf, 'src_buf', context.src_buf)
 
   " Scrolled or not
   let scrolled = (src_top != prev_src_top || src_bottom != prev_src_bottom)
@@ -129,6 +134,9 @@ function! s:get_context() "{{{
   " Get current window
   let context.cur_win = winnr()
 
+  " Get source buffer
+  let context.src_buf = bufnr('%')
+
   return context
 endfunction "}}}
 
@@ -182,7 +190,7 @@ function! shrinkmap#viewport#jump(mouse_line) "{{{
   wincmd p
 
   " Check current buffer
-  if !shrinkmap#current_buffer_is_target()
+  if !shrinkmap#is_current_buffer_target()
     return
   endif
 

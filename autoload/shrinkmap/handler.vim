@@ -31,8 +31,29 @@ function! s:on_win_enter() "{{{
   call shrinkmap#debug(1, 'shrinkmap#handler.on_win_enter()')
 
   " Check window count
-  if winnr('$') == 1
-    " TODO: BUG: E173: 1 more file to edit
+  if winnr('$') > 1
+    return
+  end
+
+  " Get previous source buffer
+  let sm_buf = bufnr(shrinkmap#buf_name_pattern())
+  let prev_src_buf = getbufvar(sm_buf, 'src_buf')
+
+  " Get next buffers
+  let buffers = filter(range(1, bufnr('$')),
+    \ 'v:val > prev_src_buf && shrinkmap#is_buffer_target(bufname(v:val))'
+  \)
+  call shrinkmap#debug(1, 'prev_src_buf = ' . prev_src_buf)
+  for num in buffers
+    call shrinkmap#debug(1, 'bufnr = ' . num . ', bufname = ' . bufname(num))
+  endfor
+
+  if len(buffers) >= 1
+    " Switch to next buffer
+    execute 'silent buffer' buffers[0]
+    filetype detect
+    call shrinkmap#sidebar#open()
+  else
     quit
   endif
 endfunction "}}}
@@ -178,7 +199,7 @@ endfunction " }}}
 
 
 function! s:lazy_update(timer) "{{{
-  call shrinkmap#debug(1,
+  call shrinkmap#debug(2,
     \ 'shrinkmap#handler.lazy_update()'    .
     \ ', a:timer = '       . a:timer       .
     \ ', s:need_update = ' . s:need_update .
