@@ -34,7 +34,7 @@ if !exists('g:shrinkmap_highlight_name')
 endif
 
 if !exists('g:shrinkmap_lazy_limit_time')
-  " Limit second for lazy drawing.
+  " Limit second for lazy drawing. Timeout interval should not be set 0.
   let g:shrinkmap_lazy_limit_time  = 0.25 "second
 endif
 
