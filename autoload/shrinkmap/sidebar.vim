@@ -58,7 +58,7 @@ function! shrinkmap#sidebar#open() "{{{
   execute cur_win 'wincmd w'
 
   " Update shrinkmap
-  call shrinkmap#viewport#update(1)
+  call shrinkmap#viewport#update()
 endfunction "}}}
 
 

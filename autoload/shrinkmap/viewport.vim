@@ -2,7 +2,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-function! shrinkmap#viewport#update(force) "{{{
+function! shrinkmap#viewport#update() "{{{
   " Check current buffer
   if !shrinkmap#is_current_buffer_target()
     return
@@ -72,7 +72,6 @@ function! shrinkmap#viewport#update(force) "{{{
 
   call shrinkmap#debug(1,
     \ 'shrinkmap#viewport#update()'            .
-    \ ': force = '           . a:force         .
     \ ', view_width = '      . view_width      .
     \ ', view_height = '     . view_height     .
     \ ', display_top = '     . display_top     .
@@ -89,7 +88,7 @@ function! shrinkmap#viewport#update(force) "{{{
   " Init canvas
   let canvas = shrinkmap#canvas#init()
 
-  if a:force || scrolled || resized
+  if scrolled || resized
     call s:draw_canvas(canvas, src_top, src_bottom, view_width)
   endif
 
@@ -97,7 +96,7 @@ function! shrinkmap#viewport#update(force) "{{{
   execute sm_win 'wincmd w'
   execute 'buffer ' shrinkmap#buf()
 
-  if a:force || scrolled || resized
+  if scrolled || resized
     " Start edit
     setlocal noreadonly modifiable
 
