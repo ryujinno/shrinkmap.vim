@@ -126,7 +126,8 @@ endfunction "}}}
 
 function! s:lazy_update(timer_id) "{{{
   call shrinkmap#debug(2,
-    \ 'shrinkmap#handler.lazy_update()'
+    \ 'shrinkmap#handler.lazy_update(): ' .
+    \ 'timer id = ' . a:timer_id
   \)
 
   call shrinkmap#viewport#update()
