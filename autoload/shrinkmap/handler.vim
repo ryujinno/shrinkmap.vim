@@ -115,7 +115,7 @@ endfunction "}}}
 function! s:init_timer() "{{{
   if has('timers')
     if !exists('s:timer')
-      let timeout = float2nr(g:shrinkmap_lazy_limit_time * 1000)
+      let timeout = float2nr(g:shrinkmap_lazy_draw_interval * 1000)
       if timeout > 0
         let s:timer = timer_start(timeout, function('s:lazy_update'), { 'repeat': -1 })
       endif

@@ -95,16 +95,15 @@ let g:shrinkmap_highlight_name = 'CursorLine'
 
 
 <dl>
-  <dt>g:shrinkmap_lazy_limit_time</dt>
+  <dt>g:shrinkmap_lazy_draw_interval</dt>
   <dd>
-      Limit second for lazy drawing.
+      Interval seconds for lazy drawing. This interval should not be set 0.
   </dd>
 </dl>
 
 ```VimL
-let g:shrinkmap_lazy_limit_time  = 0.25 "second
+let g:shrinkmap_lazy_draw_interval  = 0.25 "second
 ```
-
 
 ## Contributing
 

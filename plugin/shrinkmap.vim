@@ -33,9 +33,9 @@ if !exists('g:shrinkmap_highlight_name')
   let g:shrinkmap_highlight_name = 'CursorLine'
 endif
 
-if !exists('g:shrinkmap_lazy_limit_time')
-  " Limit second for lazy drawing. Timeout interval should not be set 0.
-  let g:shrinkmap_lazy_limit_time  = 0.25 "second
+if !exists('g:shrinkmap_lazy_draw_interval')
+  " Interval seconds for lazy drawing. This interval should not be set 0.
+  let g:shrinkmap_lazy_draw_interval  = 0.25 "second
 endif
 
 if !exists('g:shrinkmap_debug')
