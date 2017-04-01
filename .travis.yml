@@ -18,6 +18,7 @@ before_script:
 # TODO: WORKARROUND: vimspec before all bug
   - cd vim-themis
   - git reset --hard 17b0910d7da5ae3e5a3755470b71a00f1f755163
+  - cd ..
 
 script:
   - sh /tmp/vim-vimlint/bin/vimlint.sh -l /tmp/vim-vimlint -p /tmp/vim-vimlparser -v autoload plugin
