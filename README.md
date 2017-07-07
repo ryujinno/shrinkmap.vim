@@ -113,8 +113,3 @@ let g:shrinkmap_lazy_draw_interval  = 0.25 "second
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
 
-
-## License
-
-ShinkMap.vim is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
